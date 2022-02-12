@@ -58,13 +58,13 @@ def calculate_acceleration(part1, part2):
     r = part1.pos - part2.pos       # delta r -
     # Boundary condition realisation:
     for i in range(3):
-        if r[i] > L / 2:
+        if abs(r[i]) > L / 2:
             r[i] = r[i] - L * sgn(r[i])
             
     dist = norm(r)
     if dist < r_cut:
-        part1.acc = force(r) / M
-        part2.acc = -part1.acc
+        part1.acc += force(r) / M       # we add the force from only one particle acting on another to the total acc
+        part2.acc += -part1.acc
 
 def main_function():
     '''
@@ -73,6 +73,10 @@ def main_function():
     particles = initialize_system()
 
     for ts in range(TIME_STEPS):
+        for i in particles:
+            i.acc = np.zeros(3)
+        # then calculate new a by adding force from all the particles
+        # then move all the particles
         pass
 
 # ---------------------------------------- #
@@ -80,4 +84,4 @@ particles = initialize_system()
 
 for i in range(1, N):
     f_vec = force(particles[0].pos - particles[i].pos)
-    print(f_vec)
+    #print(f_vec)
