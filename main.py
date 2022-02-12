@@ -1,31 +1,40 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
-SIGMA = 1
-EPSILON = 1
-M = 1
-
-TIME_STEPS = 100
-N = 20
-L = N ** (1 / 3)
-
-dt = 0.001
-#rho = 
-#T = 
+import random
+from numpy.linalg import norm
+from math import sqrt
+from constants import *
 
 class Particle:
+    '''
+    class, which will represent a moving particle
+    '''
     def __init__(self, pos, vel):
         self.pos = pos
         self.vel = vel
         self.acc = 0
 
+        self.energy = norm(vel)
+
     def move(self):
         pass
 
-# def initialize_particles():
-#     for _ in range(N):
+def initialize_system():
+    '''
+    initializes coordinates and velocities of particles
+    with a uniform distribution
+    '''
+    for _ in range(N):
+        pos = np.zeros(3)
+
+def recalculate_forces():
+    '''
+    recalculates forces for every particle
+    '''
+    pass
 
 def main_function():
-    '''это главный цикл, в котором будет происходить расчет взаимодействия частиц и их движение
+    '''
+    main cycle, all the movements and calculations will happen here
     '''
     pass
