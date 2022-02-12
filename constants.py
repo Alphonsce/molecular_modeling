@@ -7,7 +7,7 @@ M = 1
 
 TIME_STEPS = 100
 N = 30
-L = N ** (1 / 3)
+L = 2 * N ** (1 / 3)
 r_cut = 2.5     # the distance of cut for the LJ potential
 
 dt = 0.001
