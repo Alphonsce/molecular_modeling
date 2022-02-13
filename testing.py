@@ -1,6 +1,8 @@
 import numpy as np
 import random
 from numpy.linalg import norm
+from math import pow
+from constants import *
 
 np.random.RandomState(12)
 
@@ -19,7 +21,8 @@ mapped_sheeps = np.array(list(map(lambda x: x.size, sheeps)))
 
 # ----------------------------------- #
 
-print(random.normalvariate(0, 1))
+arr = np.array([1, 2, 3])
+arr = np.append(arr, 5)
+print(arr)
 
-m = abs(np.array([2, 0]))
-print(norm(m))
+print(np.arange(0, TIME_STEPS * dt, dt))

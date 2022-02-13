@@ -23,7 +23,14 @@ class Particle:
         self.pot_energy = 0
 
     def move(self):
-        pass
+        self.pos += self.vel * dt + 0.5 * self.acc * dt ** 2
+        # boundary conditions:
+        for r_i in self.pos:
+            if r_i > L:
+                r_i -= L
+            if r_i < L:
+                r_i += L
+
 
 def initialize_system():
     '''
@@ -45,7 +52,7 @@ def force(r):
     r is a vector from one particle to another
     '''
     d = norm(r)
-    f = 4 * EPSILON * (12 * (SIGMA / pow(d, 13)) - 6 * (SIGMA / pow(d, 7))) * (r / d)
+    f = 4 * EPSILON * (12 * (SIGMA / pow(d, 13)) - 6 * (SIGMA / pow(d, 7))) * (r / d)   # wrong power of sigma is on purpose
     return f
 
 def sgn(x):
@@ -65,28 +72,54 @@ def calculate_acceleration(part1, part2):
     dist = norm(r)
     if dist < r_cut:
         part1.acc += force(r) / M       # we add the force from only one particle acting on another to the total acc
-        part2.acc += -part1.acc
-        #TODO: add potential energy from interacting with this particle
+        part2.acc -= part1.acc
+        # potential of two particle interaction:
+        part1.pot_energy = -4 * (1 / pow(dist, 6) - 1 / pow(dist, 12))
+        part2.pot_energy = part1.pot_energy
 
-def main_function():
+def plot_energy(energies):
+    time = np.arange(0, len(energies) * dt, dt)
+    plt.plot(time, energies)
+    plt.show()
+
+def main_cycle():
     '''
     main cycle, all the movements and calculations will happen here
     '''
     particles = initialize_system()
+    total_pot = 0
+    total_kin = 0
+    energies = np.array([])
 
     for ts in range(TIME_STEPS):
-        for i in particles:
-            i.acc = np.zeros(3)
-            i.kin_energy = 0
-            i.pot_energy = 0
-        #TODO:
-        # then calculate new a by adding force from all the particles
-        # then move all the particles
-        pass
+        total_pot = 0
+        total_kin = 0
+        for p in particles:
+            p.acc = np.zeros(3)
+            p.kin_energy = 0
+            p.pot_energy = 0
+        for i in range(N):
+            particles[i].kin_energy = 0.5 * norm(particles[i].vel) ** 2
+            for j in range(i + 1, N):
+                calculate_acceleration(particles[i], particles[j])
+
+        for p in particles:
+            total_kin += p.kin_energy
+            total_pot += p.pot_energy
+            p.move()
+
+        energies = np.append(energies, total_kin + total_pot)
+        
+        # TODO: calculate and rescale velocities here
+        T_current = (2 / 3) * total_kin / N
+        # scaler = sqrt(T_thermostat / T_current)
+        scaler = 1
+        for p in particles:
+            p.vel = scaler * p.vel + 0.5 * dt * p.acc
+
+    print(energies)
+    plot_energy(energies)
 
 # ---------------------------------------- #
-particles = initialize_system()
 
-for i in range(1, N):
-    f_vec = force(particles[0].pos - particles[i].pos)
-    #print(f_vec)
+main_cycle()
