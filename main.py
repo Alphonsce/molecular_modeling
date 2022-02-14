@@ -75,7 +75,7 @@ def calculate_acceleration(part1, part2):
         part2.acc -= part1.acc
         # potential of two particle interaction:
         part1.pot_energy = -4 * (1 / pow(dist, 6) - 1 / pow(dist, 12))
-        part2.pot_energy = part1.pot_energy
+        part2.pot_energy = 0        # because potential works for pairs
 
 def plot_energy(energies):
     time = np.arange(0, len(energies) * dt, dt)
