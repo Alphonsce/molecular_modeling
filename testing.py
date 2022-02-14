@@ -1,28 +1,17 @@
+from turtle import position
 import numpy as np
 import random
+import matplotlib.pyplot as plt
+from scipy.stats import iqr
 from numpy.linalg import norm
 from math import pow
 from constants import *
 
-np.random.RandomState(12)
+np.random.seed(12)
 
-arr = np.array([1, 2, 3])
-arr = np.append(arr, [i for i in range(1, 10) if i % 2 == 0])
+pos = np.array([1, 2, 3])
 
-arr = np.array(['a', 'b', 'c', 5])
+for i in range(3):
+    pos[i] = 1
 
-class Sheep:
-    def __init__(self, size):
-        self.size = size
-
-sheeps = np.array([Sheep(size=i) for i in range(5)])
-
-mapped_sheeps = np.array(list(map(lambda x: x.size, sheeps)))
-
-# ----------------------------------- #
-
-arr = np.array([1, 2, 3])
-arr = np.append(arr, 5)
-print(arr)
-
-print(np.arange(0, TIME_STEPS * dt, dt))
+print(pos)

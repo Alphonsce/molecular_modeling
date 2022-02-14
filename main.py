@@ -5,7 +5,8 @@ from numpy.linalg import norm
 from math import sqrt, pow
 from constants import *
 
-np.random.seed(1)
+#141 seed was ok
+np.random.seed(10)
 
 # Because temperature is an average kinetic energy of CHAOTIC movement, I'll need to substract
 # the speed of center of mass from the speed of every atom to calculate the temperature
@@ -25,11 +26,12 @@ class Particle:
     def move(self):
         self.pos += self.vel * dt + 0.5 * self.acc * dt ** 2
         # boundary conditions:
-        for r_i in self.pos:
-            if r_i > L:
-                r_i -= L
-            if r_i < L:
-                r_i += L
+        # do not work as intented
+        for i in range(3):
+            if self.pos[i] > L:
+                self.pos[i] -= L
+            if self.pos[i] < L:
+                self.pos[i] += L
 
 
 def initialize_system():
@@ -42,7 +44,7 @@ def initialize_system():
         vel = np.zeros(3)
         acc = np.zeros(3)
         for i in range(3):
-            pos[i] = random.uniform(0, L)
+            pos[i] = np.random.uniform(0, L)
             vel[i] = random.normalvariate(0, 1)
         particles.append(Particle(pos, vel, acc))
     return particles
@@ -75,17 +77,22 @@ def calculate_acceleration(part1, part2):
         part2.acc -= part1.acc
         # potential of two particle interaction:
         part1.pot_energy = -4 * (1 / pow(dist, 6) - 1 / pow(dist, 12))
-        part2.pot_energy = 0        # because potential works for pairs
+        part2.pot_energy = -4 * (1 / pow(dist, 6) - 1 / pow(dist, 12))        # because potential works for pairs
 
 def plot_energy(energies):
     time = np.arange(0, len(energies) * dt, dt)
     plt.plot(time, energies)
     plt.show()
 
+def plot_vel_distribution(velocities):
+    plt.hist(velocities, N)
+    plt.show()
+
 def main_cycle():
     '''
     main cycle, all the movements and calculations will happen here
     '''
+    f = open('/Users/avarlamov/molecular_modeling/trajectories.xyz', 'w')
     particles = initialize_system()
     total_pot = 0
     total_kin = 0
@@ -105,7 +112,7 @@ def main_cycle():
 
         for p in particles:
             total_kin += p.kin_energy
-            total_pot += p.pot_energy
+            total_pot += p.pot_energy / 2
             p.move()
 
         energies = np.append(energies, total_kin + total_pot)
@@ -114,12 +121,24 @@ def main_cycle():
         T_current = (2 / 3) * total_kin / N
         # scaler = sqrt(T_thermostat / T_current)
         scaler = 1
+        f.write(str(N) + '\n')
+        f.write('\n')
         for p in particles:
             p.vel = scaler * p.vel + 0.5 * dt * p.acc
+            f.write('1 ' + str(p.pos[0]) + ' ' + str(p.pos[1]) + ' ' + str(p.pos[2]) + '\n')
 
-    print(energies)
+
+    velocities = np.array([])
+    for p in particles:
+        velocities = np.append(velocities, norm(p.vel))
+    print(velocities)
+    #plot_vel_distribution(velocities)
     plot_energy(energies)
+
+    print(T_current)
 
 # ---------------------------------------- #
 
 main_cycle()
+
+# Складывать сколько частиц попало в какой диапазон для N шагов, и потом делить на N
