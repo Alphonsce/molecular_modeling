@@ -33,6 +33,10 @@ def initialize_system():
     '''
     initializes coordinates and velocities of particles
     '''
+    f = open('trajectories.xyz', 'w')
+    f1 = open('velocity.xyz', 'w')
+    f2 = open('acceleration.xyz', 'w')
+    f3 = open('impulses.xyz')
     particles = []
     for _ in range(N):
         pos = np.zeros(3)
@@ -91,13 +95,15 @@ def plot_vel_distribution(velocities):
     plt.hist(velocities, N)
     plt.show()
 
+def write_into_the_files(p):
+    f.write('1 ' + str(p.pos[0]) + ' ' + str(p.pos[1]) + ' ' + str(p.pos[2]) + '\n')
+    f1.write('1 ' + str(p.vel[0]) + ' ' + str(p.vel[1]) + ' ' + str(p.vel[2]) + '\n')
+    f2.write('1 ' + str(p.acc[0]) + ' ' + str(p.acc[1]) + ' ' + str(p.acc[2]) + '\n')
+
 def main_cycle():
     '''
     main cycle, all the movements and calculations will happen here
     '''
-    f = open('/Users/avarlamov/molecular_modeling/trajectories.xyz', 'w')
-    f1 = open('/Users/avarlamov/molecular_modeling/velocity.xyz', 'w')
-    f2 = open('/Users/avarlamov/molecular_modeling/acceleration.xyz', 'w')
     particles = initialize_system()
     total_pot = 0
     total_kin = 0
@@ -107,7 +113,9 @@ def main_cycle():
         total_pot = 0
         total_kin = 0
         for p in particles:
-            p.vel = p.vel + 0.5 * p.acc * dt # adding 1/2 * a(t) * dt
+            write_into_the_files(p)
+            if ts != 0:
+                p.vel = p.vel + 0.5 * p.acc * dt # adding 1/2 * a(t) * dt
             p.acc = np.zeros(3)
             p.kin_energy = 0
             p.pot_energy = 0
@@ -136,19 +144,22 @@ def main_cycle():
         #
         f2.write(str(N) + '\n')
         f2.write('\n')
+        #
+        f3.write(str(N) + '\n')
+        f3.write('\n')
+
         print('Pot: ', total_pot, 'Kin: ', total_kin, 'Total: ', total_kin + total_pot)
         #--------
         for p in particles:
-            p.vel = p.vel + dt * p.acc / 2    # adding 1/2 * a(t + dt)
-            f.write('1 ' + str(p.pos[0]) + ' ' + str(p.pos[1]) + ' ' + str(p.pos[2]) + '\n')
-            f1.write('1 ' + str(p.vel[0]) + ' ' + str(p.vel[1]) + ' ' + str(p.vel[2]) + '\n')
-            f2.write('1 ' + str(p.acc[0]) + ' ' + str(p.acc[1]) + ' ' + str(p.acc[2]) + '\n')
-
+            if ts != 0:     # because of the first time step
+                p.vel = p.vel + dt * p.acc / 2    # adding 1/2 * a(t + dt)
+            else:
+                print('First step')
+                p.vel = p.vel + dt * p.acc
 
     velocities = np.array([])
     for p in particles:
         velocities = np.append(velocities, norm(p.vel))
-    print(velocities)
     #plot_vel_distribution(velocities)
     plot_energy(energies)
 
@@ -159,11 +170,14 @@ def main_cycle():
 f = open('trajectories.xyz', 'r+')      #clearing a file
 f.truncate(0)
 #
-f1 = open('trajectories.xyz', 'r+')      #clearing a file
+f1 = open('velocity.xyz', 'r+')      #clearing a file
 f1.truncate(0)
 #
-f2 = open('trajectories.xyz', 'r+')      #clearing a file
+f2 = open('acceleration.xyz', 'r+')      #clearing a file
 f2.truncate(0)
+#
+f3 = open('impulses.xyz', 'r+')      #clearing a file
+f3.truncate(0)
 main_cycle()
 
 # Складывать сколько частиц попало в какой диапазон для N шагов, и потом делить на N
