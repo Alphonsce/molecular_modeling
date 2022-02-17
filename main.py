@@ -36,7 +36,7 @@ def initialize_system():
     f = open('trajectories.xyz', 'w')
     f1 = open('velocity.xyz', 'w')
     f2 = open('acceleration.xyz', 'w')
-    f3 = open('impulses.xyz')
+    f3 = open('momentums.xyz')
     particles = []
     for _ in range(N):
         pos = np.zeros(3)
@@ -108,11 +108,26 @@ def main_cycle():
     total_pot = 0
     total_kin = 0
     energies = np.array([])
+    total_momentum = np.zeros(3)
 
     for ts in range(TIME_STEPS):
+        f.write(str(N) + '\n')
+        f.write('\n')
+        #
+        f1.write(str(N) + '\n')
+        f1.write('\n')
+        #
+        f2.write(str(N) + '\n')
+        f2.write('\n')
+        #
+        f3.write(str(total_momentum[0]) + ' ' + str(total_momentum[1]) + ' ' + str(total_momentum[2]) + '\n')
+        f3.write('\n')
+        #
         total_pot = 0
         total_kin = 0
+        total_momentum = np.zeros(3)
         for p in particles:
+            total_momentum += p.vel
             write_into_the_files(p)
             if ts != 0:
                 p.vel = p.vel + 0.5 * p.acc * dt # adding 1/2 * a(t) * dt
@@ -133,21 +148,6 @@ def main_cycle():
         energies = np.append(energies, total_kin + total_pot)
         
         T_current = (2 / 3) * total_kin / N
-        # scaler = sqrt(T_thermostat / T_current)
-        scaler = 1
-        #-------
-        f.write(str(N) + '\n')
-        f.write('\n')
-        #
-        f1.write(str(N) + '\n')
-        f1.write('\n')
-        #
-        f2.write(str(N) + '\n')
-        f2.write('\n')
-        #
-        f3.write(str(N) + '\n')
-        f3.write('\n')
-
         print('Pot: ', total_pot, 'Kin: ', total_kin, 'Total: ', total_kin + total_pot)
         #--------
         for p in particles:
@@ -176,7 +176,7 @@ f1.truncate(0)
 f2 = open('acceleration.xyz', 'r+')      #clearing a file
 f2.truncate(0)
 #
-f3 = open('impulses.xyz', 'r+')      #clearing a file
+f3 = open('momentums.xyz', 'r+')      #clearing a file
 f3.truncate(0)
 main_cycle()
 
