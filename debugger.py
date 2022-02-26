@@ -28,7 +28,6 @@ class Particle:
         # boundary conditions:
         # do not work as intented
 
-
 def initialize_system():
     '''
     initializes coordinates and velocities of particles
@@ -38,14 +37,28 @@ def initialize_system():
     f2 = open('acceleration.xyz', 'w')
     f3 = open('momentums.xyz')
     particles = []
-    for _ in range(N):
-        pos = np.zeros(3)
-        vel = np.zeros(3)
-        acc = np.zeros(3)
-        for i in range(3):
-            pos[i] = np.random.uniform(0, 3)        #!!!
-            #vel[i] = random.normalvariate(0, 0.5)
-        particles.append(Particle(pos, vel, acc))
+    if N == 2:
+        for i in range(N):
+            pos = np.array([100, 100, i * 1.1 + 100], dtype='float')        # 1.12 is a point of no force
+            vel = np.zeros(3)
+            acc = np.zeros(3)
+            for k in range(3):
+                vel[k] = random.normalvariate(0, 1)
+            particles.append(Particle(pos, vel, acc))
+        
+    else:
+        for i in range(N):
+            pos = np.zeros(3)
+            vel = np.zeros(3)
+            acc = np.zeros(3)
+            for k in range(3):
+                pos[k] = np.random.uniform(0, L)
+                vel[k] = random.normalvariate(0, 0)
+            particles.append(Particle(pos, vel, acc))
+            
+    for i in range(N):
+        for j in range(i + 1, N):
+            calculate_acceleration(particles[i], particles[j])
     return particles
 
 def force(r):
@@ -53,7 +66,7 @@ def force(r):
     r is a vector from one particle to another
     '''
     d = norm(r)
-    f = 4 * EPSILON * (12 * (SIGMA / pow(d, 13)) - 6 * (SIGMA / pow(d, 7))) * (r / d)   # wrong power of sigma is on purpose
+    f = 4 * (12 * pow(d, -13) - 6 * pow(d, -7)) * (r / d)   # wrong power of sigma is on purpose
     return f
 
 def sgn(x):
@@ -71,11 +84,12 @@ def calculate_acceleration(part1, part2):
             r[i] = r[i] - L * sgn(r[i])
             
     dist = norm(r)
+    r_cut = 50505055050505
     if dist < r_cut:
         part1.acc += force(r) / M       # we add the force from only one particle acting on another to the total acc
         part2.acc -= force(r) / M
         # potential of two particle interaction, we need to add it to the total pot of one:
-        part1.pot_energy += -4 * (1 / pow(dist, 6) - 1 / pow(dist, 12))
+        part1.pot_energy += -4 * (pow(dist, -6) - pow(dist, -12))
         part2.pot_energy += 0
 
 def check_boundary(particle):
@@ -85,6 +99,8 @@ def check_boundary(particle):
     for i in range(3):
         if abs(particle.pos[i]) > L:
             particle.pos[i] %=  L
+            print('123')
+
 
 def plot_energy(energies):
     time = np.arange(0, len(energies) * dt, dt)
@@ -107,10 +123,11 @@ def main_cycle():
     particles = initialize_system()
     total_pot = 0
     total_kin = 0
-    energies = np.array([])
     #---
+    energies = np.array([])
+    kins = np.array([])
+    pots = np.array([])
     total_momentum = np.zeros(3)
-    total_force = np.zeros(3)
     #---
     for ts in range(TIME_STEPS):
         f.write(str(N) + '\n')
@@ -128,44 +145,37 @@ def main_cycle():
         total_pot = 0
         total_kin = 0
         total_momentum = np.zeros(3)
-        total_force = np.zeros(3)
+        #--------------
         for p in particles:
+            p.move()
+            p.kin_energy = 0.5 * norm(p.vel) ** 2
             total_momentum += p.vel
-            total_force += p.acc
             write_into_the_files(p)
-            if ts != 0:
-                p.vel = p.vel + 0.5 * p.acc * dt # adding 1/2 * a(t) * dt
+            p.vel = p.vel + 0.5 * p.acc * dt # adding 1/2 * a(t) * dt
             p.acc = np.zeros(3)
-            p.kin_energy = 0
             p.pot_energy = 0
-            check_boundary(p)
+            #check_boundary(p)
         for i in range(N):
-            particles[i].kin_energy = 0.5 * norm(particles[i].vel) ** 2
             for j in range(i + 1, N):
                 calculate_acceleration(particles[i], particles[j])
 
         for p in particles:
             total_kin += p.kin_energy
             total_pot += p.pot_energy
-            p.move()
 
         energies = np.append(energies, total_kin + total_pot)
         
         T_current = (2 / 3) * total_kin / N
-        #print('Pot: ', total_pot, 'Kin: ', total_kin, 'Total: ', total_kin + total_pot)
-        print()
+        print('Pot: ', total_pot, 'Kin: ', total_kin, 'Total: ', total_kin + total_pot)
         #--------
         for p in particles:
-            if ts != 0:     # because of the first time step
-                p.vel = p.vel + dt * p.acc / 2    # adding 1/2 * a(t + dt)
-            else:
-                p.vel = p.vel + dt * p.acc
+            p.vel += 0.5 * p.acc * dt   # adding 1/2 * a(t + dt)
 
     velocities = np.array([])
     for p in particles:
         velocities = np.append(velocities, norm(p.vel))
     #plot_vel_distribution(velocities)
-    plot_energy(energies)
+    #plot_energy(energies)
 
     print(T_current)
 

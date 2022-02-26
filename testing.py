@@ -43,4 +43,11 @@ def move(self):
         if self.pos[i] < L:
             self.pos[i] += L
 
-print(15000.1298717 % 5)
+
+print(
+    24 * (pow(1.1, -7) - 2 * pow(1.1, -13))
+)
+
+print(
+    4 * (pow(1.1, -6) - pow(1.1, -12))
+)
