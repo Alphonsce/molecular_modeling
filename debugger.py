@@ -53,7 +53,7 @@ def initialize_system():
             acc = np.zeros(3)
             for k in range(3):
                 pos[k] = np.random.uniform(0, L)
-                vel[k] = random.normalvariate(0, 0)
+                vel[k] = random.normalvariate(0, 1)
             particles.append(Particle(pos, vel, acc))
             
     for i in range(N):
@@ -84,7 +84,6 @@ def calculate_acceleration(part1, part2):
             r[i] = r[i] - L * sgn(r[i])
             
     dist = norm(r)
-    r_cut = 50505055050505
     if dist < r_cut:
         part1.acc += force(r) / M       # we add the force from only one particle acting on another to the total acc
         part2.acc -= force(r) / M
@@ -102,9 +101,16 @@ def check_boundary(particle):
             print('123')
 
 
-def plot_energy(energies):
+def plot_all_energies(energies, kin, pot):
     time = np.arange(0, len(energies) * dt, dt)
-    plt.plot(time, energies)
+    plt.plot(time, energies, color='blue')
+    plt.plot(time, kin, color='red')
+    plt.plot(time, pot, color='green')
+    plt.show()
+
+def plot_total_energy(energies):
+    time = np.arange(0, len(energies) * dt, dt)
+    plt.plot(time, energies, color='blue')
     plt.show()
 
 def plot_vel_distribution(velocities):
@@ -164,6 +170,8 @@ def main_cycle():
             total_pot += p.pot_energy
 
         energies = np.append(energies, total_kin + total_pot)
+        kins = np.append(kins, total_kin)
+        pots = np.append(pots, total_pot)
         
         T_current = (2 / 3) * total_kin / N
         print('Pot: ', total_pot, 'Kin: ', total_kin, 'Total: ', total_kin + total_pot)
@@ -175,7 +183,8 @@ def main_cycle():
     for p in particles:
         velocities = np.append(velocities, norm(p.vel))
     #plot_vel_distribution(velocities)
-    #plot_energy(energies)
+    plot_all_energies(energies, kins, pots)
+    #plot_total_energy(energies)
 
     print(T_current)
 
