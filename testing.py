@@ -4,17 +4,10 @@ import random
 import matplotlib.pyplot as plt
 from scipy.stats import iqr
 from numpy.linalg import norm
-from math import pow
+from math import pow, ceil
 from constants import *
 
-np.random.seed(12)
-
-pos = np.array([1, 2, 3])
-
-for i in range(3):
-    if i == 2:
-        pos[i] -= 1
-
+np.random.seed(42)
 
 class Particle:
     '''
@@ -28,26 +21,22 @@ class Particle:
         self.kin_energy = 0     # 0.5 * M * norm(vel) ** 2
         self.pot_energy = 0
 
-part = Particle(np.array([7, 5, 8]), np.array([0.2, 0.1, 0.3]), np.zeros(3))
+# x надо менять раз в L // N, y надо менять раз в L ** 2 // N, z надо менять раз в L ** 3 // N 
 
-for i in range(50):
-    print(np.random.uniform(0, L))
+def N_grid(n):
+    return ceil(pow(n, 1 / 3))
 
-def move(self):
-    self.pos += self.vel * dt + 0.5 * self.acc * (dt ** 2)
-    # boundary conditions:
-    # do not work as intented
-    for i in range(3):
-        if self.pos[i] > L:
-            self.pos[i] -= L
-        if self.pos[i] < L:
-            self.pos[i] += L
+N = 64
+L = 4
+print(N_grid(N))
 
-
-print(
-    24 * (pow(1.1, -7) - 2 * pow(1.1, -13))
-)
-
-print(
-    4 * (pow(1.1, -6) - pow(1.1, -12))
-)
+for i in range(N):
+    n_grid = N_grid(N)
+    d = L / N_grid(N)
+    vel = np.zeros(3)
+    acc = np.zeros(3)
+    x = d * (i % n_grid)
+    y = d * (i // n_grid)
+    z = d * (i // n_grid **  2)
+    pos = np.array([x, y, z])
+    print(pos)

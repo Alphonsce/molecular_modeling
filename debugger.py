@@ -2,11 +2,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 import random
 from numpy.linalg import norm
-from math import sqrt, pow
+from math import sqrt, pow, ceil
 from constants import *
 
+# issue : Частицы при телепортации могут очень близко к другой частице телепортироваться
 #141 seed was ok, 10 kinda
-np.random.seed(10)
+np.random.seed(42)
 
 # Because temperature is an average kinetic energy of CHAOTIC movement, I'll need to substract
 # the speed of center of mass from the speed of every atom to calculate the temperature
@@ -25,10 +26,12 @@ class Particle:
 
     def move(self):
         self.pos += self.vel * dt + 0.5 * self.acc * (dt ** 2)
-        # boundary conditions:
-        # do not work as intented
+        check_boundary(self)
 
-def initialize_system():
+def N_grid(n):
+    return ceil(pow(n, 1 / 3))
+
+def initialize_system(on_grid=False, sigma_for_vel=0):
     '''
     initializes coordinates and velocities of particles
     '''
@@ -37,25 +40,28 @@ def initialize_system():
     f2 = open('acceleration.xyz', 'w')
     f3 = open('momentums.xyz')
     particles = []
-    if N == 2:
-        for i in range(N):
-            pos = np.array([100, 100, i * 1.1 + 100], dtype='float')        # 1.12 is a point of no force
+    
+    for i in range(N):
+        vel = np.zeros(3)
+        acc = np.zeros(3)
+        pos = np.zeros(3)
+        if on_grid:
+            n_grid = N_grid(N)
+            d = L / N_grid(N)
             vel = np.zeros(3)
             acc = np.zeros(3)
+            x = d * (i % n_grid) + np.random.uniform(-d / 20, d / 20)
+            y = d * (i // n_grid) + np.random.uniform(-d / 20, d / 20)
+            z = d * (i // n_grid **  2) + np.random.uniform(-d / 20, d / 20)
+            pos = np.array([x, y, z])
             for k in range(3):
-                vel[k] = random.normalvariate(0, 1)
-            particles.append(Particle(pos, vel, acc))
-        
-    else:
-        for i in range(N):
-            pos = np.zeros(3)
-            vel = np.zeros(3)
-            acc = np.zeros(3)
+                vel[k] = random.normalvariate(0, 0.5)
+        elif not on_grid:
             for k in range(3):
                 pos[k] = np.random.uniform(0, L)
-                vel[k] = random.normalvariate(0, 1)
-            particles.append(Particle(pos, vel, acc))
-            
+                vel[k] = random.normalvariate(0, 0)
+        particles.append(Particle(pos, vel, acc))
+    # calculation of initialized accelerations:
     for i in range(N):
         for j in range(i + 1, N):
             calculate_acceleration(particles[i], particles[j])
@@ -66,7 +72,7 @@ def force(r):
     r is a vector from one particle to another
     '''
     d = norm(r)
-    f = 4 * (12 * pow(d, -13) - 6 * pow(d, -7)) * (r / d)   # wrong power of sigma is on purpose
+    f = 4 * (12 * pow(d, -13) - 6 * pow(d, -7)) * (r / d)
     return f
 
 def sgn(x):
@@ -98,8 +104,6 @@ def check_boundary(particle):
     for i in range(3):
         if abs(particle.pos[i]) > L:
             particle.pos[i] %=  L
-            print('123')
-
 
 def plot_all_energies(energies, kin, pot):
     time = np.arange(0, len(energies) * dt, dt)
@@ -126,7 +130,7 @@ def main_cycle():
     '''
     main cycle, all the movements and calculations will happen here
     '''
-    particles = initialize_system()
+    particles = initialize_system(on_grid=True)
     total_pot = 0
     total_kin = 0
     #---
@@ -160,7 +164,6 @@ def main_cycle():
             p.vel = p.vel + 0.5 * p.acc * dt # adding 1/2 * a(t) * dt
             p.acc = np.zeros(3)
             p.pot_energy = 0
-            #check_boundary(p)
         for i in range(N):
             for j in range(i + 1, N):
                 calculate_acceleration(particles[i], particles[j])
@@ -174,7 +177,7 @@ def main_cycle():
         pots = np.append(pots, total_pot)
         
         T_current = (2 / 3) * total_kin / N
-        print('Pot: ', total_pot, 'Kin: ', total_kin, 'Total: ', total_kin + total_pot)
+        print('Step number: ' + str(ts), 'Pot: ', total_pot, 'Kin: ', total_kin, 'Total: ', total_kin + total_pot)
         #--------
         for p in particles:
             p.vel += 0.5 * p.acc * dt   # adding 1/2 * a(t + dt)
@@ -184,7 +187,7 @@ def main_cycle():
         velocities = np.append(velocities, norm(p.vel))
     #plot_vel_distribution(velocities)
     plot_all_energies(energies, kins, pots)
-    #plot_total_energy(energies)
+    plot_total_energy(energies)
 
     print(T_current)
 
