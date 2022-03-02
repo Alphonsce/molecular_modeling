@@ -6,12 +6,13 @@ EPSILON = 1
 M = 1
 
 TIME_STEPS = 10000
-N = 20
+N = 3
 if N == 2:
     L = 30000 * N ** (1 / 3)
 else:
-    L = 3 * N ** (1 / 3)
+    L = 2 * N ** (1 / 3)
 #r_cut = 2.5     # the distance of cut for the LJ potential
+#r_cut = 10
 r_cut = 500
 
 dt = 0.001      # 0.001
