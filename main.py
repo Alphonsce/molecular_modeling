@@ -96,8 +96,8 @@ def calculate_acceleration(part1, part2):
         part1.acc += force(r) / M       # we add the force from only one particle acting on another to the total acc
         part2.acc -= force(r) / M
         # potential of two particle interaction, we need to add it to the total pot of one: Both have a half of the total
-        part1.pot_energy += -2 * (pow(dist, -6) - pow(dist, -12))
-        part2.pot_energy += -2 * (pow(dist, -6) - pow(dist, -12))
+        part1.pot_energy += -4 * (pow(dist, -6) - pow(dist, -12))
+        part2.pot_energy += 0
 
 def check_boundary(particle):
     '''
