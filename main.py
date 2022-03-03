@@ -189,7 +189,7 @@ def main_cycle(spawn_on_grid=True):
     velocities = np.array([])
     for p in particles:
         velocities = np.append(velocities, norm(p.vel))
-    #plot_vel_distribution(velocities)
+    plot_vel_distribution(velocities)
     plot_all_energies(energies, kins, pots)
     plot_total_energy(energies)
 
