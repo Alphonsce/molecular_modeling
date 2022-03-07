@@ -128,7 +128,6 @@ def plot_vel_distribution(particles):
         )
     
     vel_norms = np.array(list(map(lambda x: norm(x), velocities)))
-    bin_size = int(round(pow(N, 0.65), 0))
 
     velocities_x = np.array([])
     velocities_y = np.array([])
@@ -138,7 +137,19 @@ def plot_vel_distribution(particles):
         velocities_y = np.append(velocities_y ,v[1])
         velocities_z = np.append(velocities_z ,v[2])
 
-    plt.hist(vel_norms, bins=bin_size)
+    sp = None
+    iter = 1
+    names = [r'$V$', r'$V_x$', r'$V_y$', r'$V_z$']
+    bin_size = int(round(pow(N, 0.65), 0))
+    for vels in [vel_norms, velocities_x, velocities_y, velocities_z]:
+        sp = plt.subplot(2, 2, iter)
+        plt.hist(vels, bins=bin_size)
+        plt.ylabel('Число частиц', fontsize=14)
+        plt.xlabel(names[iter - 1], fontsize=14)
+        plt.grid(alpha=0.2)
+
+        iter += 1
+
     plt.show()
 
 def write_first_rows_in_files():
