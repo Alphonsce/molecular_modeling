@@ -5,8 +5,8 @@ SIGMA = 1
 EPSILON = 1
 M = 1
 
-TIME_STEPS = 50000
-N = 20
+TIME_STEPS = 100
+N = 100
 if N == 2:
     L = 30000 * N ** (1 / 3)
 else:
@@ -14,9 +14,17 @@ else:
 #r_cut = 2.5     # the distance of cut for the LJ potential
 r_cut = 10
 #r_cut = 500
-
-dt = 0.0001      # 0.001
+#rho = N / L ** 3
+dt = 0.0005      # 0.001
 # T is in epsilon / k_b units; we need to rescale velocities for temperature to be our set value
 T_thermostat = 0.8
 
+f = open('trajectories.xyz', 'r+')      #clearing a file
+f.truncate(0)
+#
+f1 = open('velocity.xyz', 'r+')      #clearing a file
+f1.truncate(0)
+#
+f2 = open('acceleration.xyz', 'r+')      #clearing a file
+f2.truncate(0)
 # ---------------------------------- #

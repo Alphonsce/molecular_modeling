@@ -5,8 +5,6 @@ from numpy.linalg import norm
 from math import sqrt, pow, ceil
 from constants import *
 
-# issue : Частицы при телепортации портится потенциальная энергия
-#141 seed was ok, 10 kinda
 np.random.seed(42)
 
 # Because temperature is an average kinetic energy of CHAOTIC movement, I'll need to substract
@@ -38,7 +36,6 @@ def initialize_system(on_grid=False, sigma_for_vel=0.5):
     f = open('trajectories.xyz', 'w')
     f1 = open('velocity.xyz', 'w')
     f2 = open('acceleration.xyz', 'w')
-    f3 = open('momentums.xyz')
     particles = []
     
     for i in range(N):
@@ -55,7 +52,7 @@ def initialize_system(on_grid=False, sigma_for_vel=0.5):
             z = d * (i // n_grid **  2) + np.random.uniform(-d / 20, d / 20)
             pos = np.array([x, y, z])
             for k in range(3):
-                vel[k] = random.normalvariate(0, 0.5)
+                vel[k] = random.normalvariate(0, 1)
         elif not on_grid:
             for k in range(3):
                 pos[k] = np.random.uniform(0, L)
@@ -87,9 +84,7 @@ def calculate_acceleration(part1, part2):
     # Boundary condition realisation:
     for i in range(3):
         if abs(r[i]) > L / 2:
-            f3.write(f'расстояние между частицами было: {r}\n')
             r[i] = r[i] - L * sgn(r[i])
-            f3.write(f'расстояние между частицами стало: {r}\n-------------------------\n')
             
     dist = norm(r)
     if dist < r_cut:
@@ -121,8 +116,29 @@ def plot_total_energy(energies):
     plt.plot(time, energies, color='blue')
     plt.show()
 
-def plot_vel_distribution(velocities):
-    plt.hist(velocities, N)
+def plot_vel_distribution(particles):
+    '''
+    particles : array of N particles
+    velocities : 2d array of 1d arrays-vectors of velocity at the final moment for every particle
+    '''
+    velocities = particles[0].vel
+    for p_number in range(1, N):
+        velocities = np.vstack(
+            (velocities, particles[p_number].vel)
+        )
+    
+    vel_norms = np.array(list(map(lambda x: norm(x), velocities)))
+    bin_size = int(round(pow(N, 0.65), 0))
+
+    velocities_x = np.array([])
+    velocities_y = np.array([])
+    velocities_z = np.array([])
+    for v in velocities:
+        velocities_x = np.append(velocities_x ,v[0])
+        velocities_y = np.append(velocities_y ,v[1])
+        velocities_z = np.append(velocities_z ,v[2])
+
+    plt.hist(vel_norms, bins=bin_size)
     plt.show()
 
 def write_first_rows_in_files():
@@ -134,9 +150,6 @@ def write_first_rows_in_files():
     #
     f2.write(str(N) + '\n')
     f2.write('\n')
-    # f3.write(str(total_momentum[0]) + ' ' + str(total_momentum[1]) + ' ' + str(total_momentum[2]) + '\n')
-    # f3.write('\n')
-    #
 
 def write_into_the_files(p):
     f.write('1 ' + str(p.pos[0]) + ' ' + str(p.pos[1]) + ' ' + str(p.pos[2]) + '\n')
@@ -186,28 +199,13 @@ def main_cycle(spawn_on_grid=True):
         for p in particles:
             p.vel += 0.5 * p.acc * dt   # adding 1/2 * a(t + dt)
 
-    velocities = np.array([])
-    for p in particles:
-        velocities = np.append(velocities, norm(p.vel))
-    plot_vel_distribution(velocities)
     plot_all_energies(energies, kins, pots)
     plot_total_energy(energies)
+    plot_vel_distribution(particles)
 
     print(T_current)
 
 # ---------------------------------------- #
-
-f = open('trajectories.xyz', 'r+')      #clearing a file
-f.truncate(0)
-#
-f1 = open('velocity.xyz', 'r+')      #clearing a file
-f1.truncate(0)
-#
-f2 = open('acceleration.xyz', 'r+')      #clearing a file
-f2.truncate(0)
-#
-f3 = open('momentums.xyz', 'r+')      #clearing a file
-f3.truncate(0)
 
 main_cycle(spawn_on_grid=True)
 
