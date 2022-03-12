@@ -2,9 +2,10 @@
 #include <vector>
 #include <string>
 
-#include "constants.hpp"
+#include "./includes/my_constants.hpp"
 
 int main()
 {
+    std::cout << my_constants::L << std::endl;
     return 0;
 }
