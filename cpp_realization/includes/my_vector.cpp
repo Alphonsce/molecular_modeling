@@ -42,11 +42,15 @@ class My_vector {
             return sum_of_vec;        
         }
 
+        void operator += (My_vector& other_vector) {
+            
+        }
+
 };
 
 int main()
 {
-    My_vector vec1({1, 2, 3});
+    My_vector vec1({-1.12312123123123, 2, 3});
     My_vector vec2({1, 2, 3});
     My_vector vec3 = vec1 + vec2;
     vec3.printVector();
