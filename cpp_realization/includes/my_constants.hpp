@@ -1,5 +1,5 @@
-#ifndef MY_CONSTANTS_H      // it is an preprocessor directive, so we don't accidentally include it twice
-#define MY_CONSTANTS_H      // #pragma_once is basically the same, but in one line
+#ifndef MY_CONSTANTS_HPP      // it is an preprocessor directive, so we don't accidentally include it twice
+#define MY_CONSTANTS_HPP      // #pragma_once is basically the same, but in one line
 
 #include <math.h>
 
