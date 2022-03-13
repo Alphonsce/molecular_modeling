@@ -11,6 +11,8 @@ class My_vector {
     
     public:
         My_vector(std::vector <long double> v_input);
+
+        My_vector();
     
         void setVect(std::vector <long double> v_set);
 

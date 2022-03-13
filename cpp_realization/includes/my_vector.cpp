@@ -1,11 +1,16 @@
-#include "my_vector.hpp"
-
 #include <vector>
 #include <iostream>
+
+#include "my_vector.hpp"
 
 My_vector::My_vector(std::vector <long double> v_input) {      // it is constructor (it is like __init__)
     _vect = v_input;
     _size = _vect.size();
+}
+
+My_vector::My_vector() {                // default constructor
+    std::vector<long double> v = {0, 0, 0};
+    _vect = v;
 }
 
 void My_vector::setVect(std::vector <long double> v_set) {
