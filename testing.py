@@ -19,3 +19,5 @@ arr = np.vstack(
 print(arr)
 arr_norms = np.array(list(map(lambda x: norm(x), arr)))
 print(arr_norms)
+
+print(np.std(arr))

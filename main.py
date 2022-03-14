@@ -1,3 +1,4 @@
+from importlib.metadata import files
 import numpy as np
 import matplotlib.pyplot as plt
 import random
@@ -9,6 +10,12 @@ np.random.seed(42)
 
 # Because temperature is an average kinetic energy of CHAOTIC movement, I'll need to substract
 # the speed of center of mass from the speed of every atom to calculate the temperature
+
+f_traj = open('trajectories.xyz', 'r+')
+f_vel = open('velocity.xyz', 'r+')
+FILES = [f_traj, f_vel]
+for file in FILES:
+    file.truncate(0)
 
 class Particle:
     '''
@@ -33,9 +40,6 @@ def initialize_system(on_grid=False, sigma_for_vel=0.5):
     '''
     initializes coordinates and velocities of particles
     '''
-    f = open('trajectories.xyz', 'w')
-    f1 = open('velocity.xyz', 'w')
-    f2 = open('acceleration.xyz', 'w')
     particles = []
     
     for i in range(N):
@@ -116,7 +120,7 @@ def plot_total_energy(energies):
     plt.plot(time, energies, color='blue')
     plt.show()
 
-def plot_vel_distribution(particles):
+def achieve_velocities(particles):
     '''
     particles : array of N particles
     velocities : 2d array of 1d arrays-vectors of velocity at the final moment for every particle
@@ -137,35 +141,50 @@ def plot_vel_distribution(particles):
         velocities_y = np.append(velocities_y ,v[1])
         velocities_z = np.append(velocities_z ,v[2])
 
+    return [vel_norms, velocities_x, velocities_y, velocities_z]
+
+def plot_vel_distribution(vel_norms, vels_x, vels_y, vels_z, temperature):
+    sigmas = []
+    mus = []
+    for arr in([vel_norms, vels_x, vels_y, vels_z]):
+        sigmas.append(np.std(arr))
+        mus.append(np.mean(arr))
+
     sp = None
     iter = 1
     names = [r'$V$', r'$V_x$', r'$V_y$', r'$V_z$']
     bin_size = int(round(pow(N, 0.65), 0))
-    for vels in [vel_norms, velocities_x, velocities_y, velocities_z]:
+    for vels in [vel_norms, vels_x, vels_y, vels_z]:
         sp = plt.subplot(2, 2, iter)
-        plt.hist(vels, bins=bin_size)
+        if iter != 1:
+            plt.hist(vels, bins=bin_size, label=f'$\sigma= ${round(sigmas[iter - 1], 2)} $\mu= ${round(mus[iter-1], 2)}')
+        else:
+             plt.hist(vels, bins=bin_size, label=f'$T={round(temperature, 3)}$')
         plt.ylabel('Число частиц', fontsize=14)
         plt.xlabel(names[iter - 1], fontsize=14)
         plt.grid(alpha=0.2)
+        plt.legend(loc='best', fontsize=11)
 
         iter += 1
 
     plt.show()
 
 def write_first_rows_in_files():
-    f.write(str(N) + '\n')
-    f.write('\n')
-    #
-    f1.write(str(N) + '\n')
-    f1.write('\n')
-    #
-    f2.write(str(N) + '\n')
-    f2.write('\n')
+    for file in FILES:
+        file.write(str(N) + '\n')
+        file.write('\n')
 
 def write_into_the_files(p):
-    f.write('1 ' + str(p.pos[0]) + ' ' + str(p.pos[1]) + ' ' + str(p.pos[2]) + '\n')
-    f1.write('1 ' + str(p.vel[0]) + ' ' + str(p.vel[1]) + ' ' + str(p.vel[2]) + '\n')
-    f2.write('1 ' + str(p.acc[0]) + ' ' + str(p.acc[1]) + ' ' + str(p.acc[2]) + '\n')
+    for file in FILES:
+        file.write('1 ' + str(p.pos[0]) + ' ' + str(p.pos[1]) + ' ' + str(p.pos[2]) + '\n')
+
+def calculate_com_vel(particles):
+    Vc = np.zeros(3)
+    for p in particles:
+        for i in range(3):
+            Vc[i] += p.vel[i]
+    Vc /= N
+    return Vc
 
 def main_cycle(spawn_on_grid=True):
     '''
@@ -178,10 +197,11 @@ def main_cycle(spawn_on_grid=True):
     energies = np.array([])
     kins = np.array([])
     pots = np.array([])
+    vels_for_plotting = [np.zeros(N), np.zeros(N), np.zeros(N), np.zeros(N)]
+    steps_of_averaging = 0.9 * TIME_STEPS
     #---
     for ts in range(TIME_STEPS):
         write_first_rows_in_files()
-        #
         total_pot = 0
         total_kin = 0
         #--------------
@@ -199,22 +219,30 @@ def main_cycle(spawn_on_grid=True):
         for p in particles:
             total_kin += p.kin_energy
             total_pot += p.pot_energy
+            p.vel += 0.5 * p.acc * dt   # adding 1/2 * a(t + dt)
+
+        # I will need to take averaged on time velocities to plot a histogram, so, let's do it:
+        if ts >= 0.1 * TIME_STEPS:
+            list_of_velocities = achieve_velocities(particles)
+            for arr_num in range(len(vels_for_plotting)):
+                vels_for_plotting[arr_num] += list_of_velocities[arr_num]
 
         energies = np.append(energies, total_kin + total_pot)
         kins = np.append(kins, total_kin)
         pots = np.append(pots, total_pot)
         
-        T_current = (2 / 3) * total_kin / N
-        print('Step number: ' + str(ts), 'Pot: ', total_pot, 'Kin: ', total_kin, 'Total: ', total_kin + total_pot)
+        Vc = norm(calculate_com_vel(particles))
+        T_current = (2 / 3) * (total_kin - 0.5 * Vc ** 2) / N       # subsracting velocity of COM
         #--------
-        for p in particles:
-            p.vel += 0.5 * p.acc * dt   # adding 1/2 * a(t + dt)
+        
+        print('Step number: ' + str(ts), 'Pot: ', total_pot, 'Kin: ', total_kin, 'Total: ', total_kin + total_pot)
 
+    # let's start plotting:
     plot_all_energies(energies, kins, pots)
     plot_total_energy(energies)
-    plot_vel_distribution(particles)
-
-    print(T_current)
+    for arr in vels_for_plotting:
+        arr /= steps_of_averaging
+    plot_vel_distribution(*vels_for_plotting, T_current)
 
 # ---------------------------------------- #
 
