@@ -56,13 +56,18 @@ def initialize_system(on_grid=False, sigma_for_vel=0.5):
             z = d * (i // n_grid **  2) + np.random.uniform(-d / 20, d / 20)
             pos = np.array([x, y, z])
             for k in range(3):
-                vel[k] = random.normalvariate(0, 1)
+                vel[k] = random.normalvariate(0, 23)
         elif not on_grid:
             for k in range(3):
                 pos[k] = np.random.uniform(0, L)
                 vel[k] = random.normalvariate(0, 0)
         particles.append(Particle(pos, vel, acc))
-    # calculation of initialized accelerations:
+    # calculation of initialized accelerations and
+    # subsrtacting speed of center of mass
+
+    Vc = calculate_com_vel(particles)
+    for p in particles:
+        p.vel -= Vc
     for i in range(N):
         for j in range(i + 1, N):
             calculate_acceleration(particles[i], particles[j])
@@ -144,6 +149,7 @@ def achieve_velocities(particles):
     return [vel_norms, velocities_x, velocities_y, velocities_z]
 
 def plot_vel_distribution(vel_norms, vels_x, vels_y, vels_z, temperature):
+    '''temperature in kT units, which are in epsilon units, so basically temprature = kT / epsilon'''
     sigmas = []
     mus = []
     for arr in([vel_norms, vels_x, vels_y, vels_z]):
@@ -152,14 +158,21 @@ def plot_vel_distribution(vel_norms, vels_x, vels_y, vels_z, temperature):
 
     sp = None
     iter = 1
-    names = [r'$V$', r'$V_x$', r'$V_y$', r'$V_z$']
+    names = [r'$|V|$', r'$V_x$', r'$V_y$', r'$V_z$']
     bin_size = int(round(pow(N, 0.65), 0))
     for vels in [vel_norms, vels_x, vels_y, vels_z]:
         sp = plt.subplot(2, 2, iter)
         if iter != 1:
-            plt.hist(vels, bins=bin_size, label=f'$\sigma= ${round(sigmas[iter - 1], 2)} $\mu= ${round(mus[iter-1], 2)}')
+            plt.hist(vels, bins=bin_size, label=f'$\sigma= ${round(sigmas[iter - 1], 2)} $\mu= ${round(mus[iter-1], 2)}', density=True)
         else:
-             plt.hist(vels, bins=bin_size, label=f'$T={round(temperature, 3)}$')
+            #x = np.arange(min(vel_norms), max(vel_norms), 0.01)
+            x = np.linspace(0, max(vel_norms), 1000)
+            plt.plot(
+                x,
+                (1 / pow(2 * np.pi * temperature , 1.5)) * 4 * np.pi * (x ** 2) * np.exp( (-(x ** 2)) / (2 * temperature) ), color = 'red',
+                label='Распределение Максвелла при T'
+            )
+            plt.hist(vels, bins=bin_size, label=f'$kT={round(temperature, 3)} \epsilon$', density=True)
         plt.ylabel('Число частиц', fontsize=14)
         plt.xlabel(names[iter - 1], fontsize=14)
         plt.grid(alpha=0.2)
@@ -231,8 +244,7 @@ def main_cycle(spawn_on_grid=True):
         kins = np.append(kins, total_kin)
         pots = np.append(pots, total_pot)
         
-        Vc = norm(calculate_com_vel(particles))
-        T_current = (2 / 3) * (total_kin - 0.5 * Vc ** 2) / N       # subsracting velocity of COM
+        T_current = (2 / 3) * (total_kin) / N       # subsracting velocity of COM, temperature in kT values
         #--------
         
         print('Step number: ' + str(ts), 'Pot: ', total_pot, 'Kin: ', total_kin, 'Total: ', total_kin + total_pot)
@@ -243,9 +255,13 @@ def main_cycle(spawn_on_grid=True):
     for arr in vels_for_plotting:
         arr /= steps_of_averaging
     plot_vel_distribution(*vels_for_plotting, T_current)
+    # and plot without averaging:
 
 # ---------------------------------------- #
 
 main_cycle(spawn_on_grid=True)
 
 # Складывать сколько частиц попало в какой диапазон для N шагов, и потом делить на N
+
+# При переходе через границу прибавляем длину ячейки - потому что сосденяя клетка точно такая же как наша и там частица движется точно так же
+# смотрим сколько 
