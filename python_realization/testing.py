@@ -5,7 +5,8 @@ import matplotlib.pyplot as plt
 from scipy.stats import iqr
 from numpy.linalg import norm
 from math import pow, ceil, sqrt
-from constants import *
+
+from includes.constants import *
 
 np.random.seed(42)
 
