@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from numpy.linalg import norm
 from math import sqrt, pow, ceil
+import pandas as pd
 
 from constants import *
 from calculations import *
@@ -36,7 +37,7 @@ def plot_total_energy(energies):
     plt.plot(time, energies, color='blue')
     plt.show()
 
-def plot_vel_distribution(vel_norms, vels_x, vels_y, vels_z, temperature):
+def plot_vel_distribution(vel_norms, vels_x, vels_y, vels_z, temperature, outpath='vels_plotting.csv'):
     '''temperature in kT units, which are in epsilon units, so basically temprature = kT / epsilon'''
     sigmas = []
     mus = []
@@ -67,5 +68,9 @@ def plot_vel_distribution(vel_norms, vels_x, vels_y, vels_z, temperature):
         plt.legend(loc='best', fontsize=11)
 
         iter += 1
+    
+    data = {'V': vel_norms, 'Vx': vels_x, 'Vy': vels_y, 'Vz': vels_z}
+    df = pd.DataFrame(data)
+    df.to_csv(outpath)
 
     plt.show()
