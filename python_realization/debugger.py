@@ -15,6 +15,24 @@ np.random.seed(42)
 # Because temperature is an average kinetic energy of CHAOTIC movement, I'll need to substract
 # the speed of center of mass from the speed of every atom to calculate the temperature
 
+def get_start_hist_param(norm_vels, vels_x, vels_y, vels_z):
+    '''
+    The most important things here are starting edges, which are fixed for
+    the whole averaging process
+    '''
+    heights_norm, edges_norm = np.histogram(norm_vels, bins=500)
+    heights_x, edges_x = np.histogram(vels_x, bins=500)
+    heights_y, edges_y = np.histogram(vels_y, bins=500)
+    heights_z, edges_z = np.histogram(vels_z, bins=500)
+    # we take only left edges here and then we'll use width
+    return {
+        'norm': (edges_norm[:-1], np.array(heights_norm)),
+        'x': (edges_x[:-1], np.array(heights_x)),
+        'y': (edges_y[:-1], np.array(heights_y)),
+        'z': (edges_z[:-1], np.array(heights_z))
+    }
+    
+
 def main_cycle(spawn_on_grid=True, sigma_for_vel=0.5):
     '''
     main cycle, all the movements and calculations will happen here
@@ -26,9 +44,14 @@ def main_cycle(spawn_on_grid=True, sigma_for_vel=0.5):
     energies = np.array([])
     kins = np.array([])
     pots = np.array([])
-    vels_for_plotting = [np.zeros(N), np.zeros(N), np.zeros(N), np.zeros(N)]
     steps_of_averaging = int(0.9 * TIME_STEPS)
     T_average = 0
+    #---
+    starting_hist_dic = get_start_hist_param(*achieve_velocities(particles))
+    edges_norm = starting_hist_dic['norm'][0]
+    edges_x = starting_hist_dic['x'][0]
+    edges_y = starting_hist_dic['y'][0]
+    edges_z = starting_hist_dic['z'][0]
     #---
     for ts in range(TIME_STEPS):
         write_first_rows_in_files()
@@ -58,10 +81,7 @@ def main_cycle(spawn_on_grid=True, sigma_for_vel=0.5):
 
         # I will need to take averaged on time velocities to plot a histogram, so, let's do it:
         if ts >= TIME_STEPS - steps_of_averaging:
-            list_of_velocities = achieve_velocities(particles)
-            T_average += T_current
-            for arr_num in range(len(vels_for_plotting)):
-                vels_for_plotting[arr_num] += list_of_velocities[arr_num]
+            list_of_velocities = achieve_velocities(particles)  
 
         #--------
         if ts % int((0.05 * TIME_STEPS)) == 0:
@@ -69,13 +89,7 @@ def main_cycle(spawn_on_grid=True, sigma_for_vel=0.5):
 
     # let's start plotting:
     T_average /= steps_of_averaging
-    plot_all_energies(energies, kins, pots)
-    plot_total_energy(energies)
-    for arr in vels_for_plotting:
-        arr /= steps_of_averaging
-    plot_vel_distribution(*vels_for_plotting, T_average, 'vels_average.csv')
-    # and plot without averaging:
-    plot_vel_distribution(*achieve_velocities(particles), T_current, 'vels_last_step.csv')
+    
 
 # ---------------------------------------- #
 

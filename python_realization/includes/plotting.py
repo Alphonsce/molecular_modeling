@@ -74,3 +74,6 @@ def plot_vel_distribution(vel_norms, vels_x, vels_y, vels_z, temperature, outpat
     df.to_csv(outpath)
 
     plt.show()
+
+def plot_advanced_vel_distribution():
+    pass
