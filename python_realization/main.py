@@ -91,6 +91,7 @@ def main_cycle(spawn_on_grid=True, sigma_for_vel=0.5):
     ]
     edges = [edges_norm, edges_x, edges_y, edges_z]
     new_hist_plot(heights, edges, T_average)
+    plot_gauss_lines(heights[1:], edges[1:])
 
 # ---------------------------------------- #
 

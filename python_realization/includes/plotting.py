@@ -106,12 +106,24 @@ def new_hist_plot(heights, edges, kT_avg, output_path='./histograms.csv'):
     # writing into the file: (I am writing left edges into the file)
     df = pd.DataFrame(
         {
-            'V': heights[0], 'Vx': heights[1], 'Vy': heights[2], 'Vz': heights[3],
+            'V_heights': heights[0], 'Vx_heights': heights[1], 'Vy_heights': heights[2], 'Vz_heights': heights[3],
             'V_edg': edges[0][:-1], 'Vx_edg': edges[1][:-1],
             'Vy_edg': edges[2][:-1], 'Vz_edg': edges[3][:-1]
         }
     )
     df.to_csv(output_path, index=False)
+
+def plot_gauss_lines(heights, edges, output_path='./gauss_lines.csv'):
+    names= ['$V_x$', '$V_y$', '$V_z$']
+    sp = None
+    for i in range(len(heights)):
+        sb = plt.subplot(2, 2, i + 1)
+        x = np.array(edges[i][:-1]) ** 2
+        y = np.log(heights[i])
+        plt.plot(x, y)
+        plt.xlabel(names[i] + '$^2$')
+        plt.ylabel('$ln(% частиц)$')
+    plt.show()
 
 #--------------------Old version of hist plotting:--------------------------------------
 
