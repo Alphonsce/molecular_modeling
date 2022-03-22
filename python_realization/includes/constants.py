@@ -5,8 +5,8 @@ SIGMA = 1
 EPSILON = 1
 M = 1
 
-TIME_STEPS = 10000
-N = 100
+TIME_STEPS = 100
+N = 150
 if N == 2:
     L = 30000 * N ** (1 / 3)
 else:

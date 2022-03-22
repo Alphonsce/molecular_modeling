@@ -37,43 +37,118 @@ def plot_total_energy(energies):
     plt.plot(time, energies, color='blue')
     plt.show()
 
-def plot_vel_distribution(vel_norms, vels_x, vels_y, vels_z, temperature, outpath='vels_plotting.csv'):
-    '''temperature in kT units, which are in epsilon units, so basically temprature = kT / epsilon'''
-    sigmas = []
-    mus = []
-    for arr in([vel_norms, vels_x, vels_y, vels_z]):
-        sigmas.append(np.std(arr))
-        mus.append(np.mean(arr))
+def get_start_hist_param(norm_vels, vels_x, vels_y, vels_z, kT):
+    '''
+    The most important things here are starting edges, which are fixed for
+    the whole averaging process,
+    returning left edges for plotting a bar and all edges for calculating heights on the next steps
+    '''
+    bin_number = 50
+    heights_norm, edges_norm = np.histogram(norm_vels, bins=bin_number)
+    heights_x, edges_x = np.histogram(vels_x, bins=bin_number)
+    heights_y, edges_y = np.histogram(vels_y, bins=bin_number)
+    heights_z, edges_z = np.histogram(vels_z, bins=bin_number)
+    # readjusting edges for our Temperature, this is the edges, NOT the lest edges for plotting:
+    big_enough_vel = 3 * sqrt(3 * kT)
+    two_thirds_of_big_enough_vel = 2 * sqrt(3 * kT)
+    edges_norm = np.linspace(
+        0, big_enough_vel, len(edges_norm)
+    )
+    edges_x = np.linspace(
+        -two_thirds_of_big_enough_vel, two_thirds_of_big_enough_vel, len(edges_x)
+    )
+    edges_y = np.linspace(
+        -two_thirds_of_big_enough_vel, two_thirds_of_big_enough_vel, len(edges_y)
+    )
+    edges_z = np.linspace(
+        -two_thirds_of_big_enough_vel, two_thirds_of_big_enough_vel, len(edges_z)
+    )
+    # we take only left edges here and then we'll use width
+    return {
+        'norm': (edges_norm, np.array(heights_norm)),
+        'x': (edges_x, np.array(heights_x)),
+        'y': (edges_y, np.array(heights_y)),
+        'z': (edges_z, np.array(heights_z))
+    }
 
-    sp = None
-    iter = 1
-    names = [r'$|V|$', r'$V_x$', r'$V_y$', r'$V_z$']
-    bin_size = int(round(pow(N, 0.65), 0))
-    for vels in [vel_norms, vels_x, vels_y, vels_z]:
-        sp = plt.subplot(2, 2, iter)
-        if iter != 1:
-            plt.hist(vels, bins=bin_size, label=f'$\sigma= ${round(sigmas[iter - 1], 2)} $\mu= ${round(mus[iter-1], 2)}', density=True)
-        else:
-            #x = np.arange(min(vel_norms), max(vel_norms), 0.01)
-            x = np.linspace(0, max(vel_norms), 1000)
+def get_hist_param(norm_vels, vels_x, vels_y, vels_z, edges_norm, edges_x, edges_y, edges_z):
+    heights_norm, useless = np.histogram(norm_vels, bins=edges_norm)
+    heights_x, useless = np.histogram(vels_x, bins=edges_x)
+    heights_y, useless = np.histogram(vels_y, bins=edges_y)
+    heights_z, useless = np.histogram(vels_z, bins=edges_z)
+
+    return {
+        'norm': np.array(heights_norm),
+        'x': np.array(heights_x),
+        'y': np.array(heights_y),
+        'z': np.array(heights_z)
+    }
+
+def new_hist_plot(heights, edges, kT_avg, output_path='./histograms.csv'):
+    names = ['$V$', '$V_x$', '$V_y$', '$V_z$']
+    sb = None
+    for i in range(len(heights)):
+        sb = plt.subplot(2, 2, 1 + i)
+        width = 0.9 * (edges[i][1] - edges[i][0])
+        if i == 0:
+            x = np.linspace(0, max(edges[0]), 1000)
             plt.plot(
                 x,
-                (1 / pow(2 * np.pi * temperature , 1.5)) * 4 * np.pi * (x ** 2) * np.exp( (-(x ** 2)) / (2 * temperature) ), color = 'red',
-                label='Распределение Максвелла при T'
+                0.1 * (1 / pow(2 * np.pi * kT_avg , 1.5)) * 4 * np.pi * (x ** 2) * np.exp( (-(x ** 2)) / (2 * kT_avg) ), color = 'red',
             )
-            plt.hist(vels, bins=bin_size, label=f'$kT={round(temperature, 3)} \epsilon$', density=True)
-        plt.ylabel('Число частиц', fontsize=14)
-        plt.xlabel(names[iter - 1], fontsize=14)
-        plt.grid(alpha=0.2)
-        plt.legend(loc='best', fontsize=11)
-
-        iter += 1
-    
-    data = {'V': vel_norms, 'Vx': vels_x, 'Vy': vels_y, 'Vz': vels_z}
-    df = pd.DataFrame(data)
-    df.to_csv(outpath)
-
+            plt.bar(edges[i][:-1], heights[i], width, label=f'$kT={round(kT_avg, 3)} \epsilon$')
+            plt.legend(loc='best', fontsize=12)
+        else:
+            plt.bar(edges[i][:-1], heights[i], width)
+        plt.ylabel('Процент частиц', fontsize=14)
+        plt.xlabel(names[i], fontsize=14)
     plt.show()
+    # writing into the file: (I am writing left edges into the file)
+    df = pd.DataFrame(
+        {
+            'V': heights[0], 'Vx': heights[1], 'Vy': heights[2], 'Vz': heights[3],
+            'V_edg': edges[0][:-1], 'Vx_edg': edges[1][:-1],
+            'Vy_edg': edges[2][:-1], 'Vz_edg': edges[3][:-1]
+        }
+    )
+    df.to_csv(output_path, index=False)
 
-def plot_advanced_vel_distribution():
-    pass
+#--------------------Old version of hist plotting:--------------------------------------
+
+# def plot_vel_distribution(vel_norms, vels_x, vels_y, vels_z, temperature, outpath='vels_plotting.csv'):
+#     '''temperature in kT units, which are in epsilon units, so basically temprature = kT / epsilon'''
+#     sigmas = []
+#     mus = []
+#     for arr in([vel_norms, vels_x, vels_y, vels_z]):
+#         sigmas.append(np.std(arr))
+#         mus.append(np.mean(arr))
+
+#     sp = None
+#     iter = 1
+#     names = [r'$|V|$', r'$V_x$', r'$V_y$', r'$V_z$']
+#     bin_size = int(round(pow(N, 0.65), 0))
+#     for vels in [vel_norms, vels_x, vels_y, vels_z]:
+#         sp = plt.subplot(2, 2, iter)
+#         if iter != 1:
+#             plt.hist(vels, bins=bin_size, label=f'$\sigma= ${round(sigmas[iter - 1], 2)} $\mu= ${round(mus[iter-1], 2)}', density=True)
+#         else:
+#             #x = np.arange(min(vel_norms), max(vel_norms), 0.01)
+#             x = np.linspace(0, max(vel_norms), 1000)
+#             plt.plot(
+#                 x,
+#                 (1 / pow(2 * np.pi * temperature , 1.5)) * 4 * np.pi * (x ** 2) * np.exp( (-(x ** 2)) / (2 * temperature) ), color = 'red',
+#                 label='Распределение Максвелла при T'
+#             )
+#             plt.hist(vels, bins=bin_size, label=f'$kT={round(temperature, 3)} \epsilon$', density=True)
+#         plt.ylabel('Число частиц', fontsize=14)
+#         plt.xlabel(names[iter - 1], fontsize=14)
+#         plt.grid(alpha=0.2)
+#         plt.legend(loc='best', fontsize=11)
+
+#         iter += 1
+    
+#     data = {'V': vel_norms, 'Vx': vels_x, 'Vy': vels_y, 'Vz': vels_z}
+#     df = pd.DataFrame(data)
+#     df.to_csv(outpath)
+
+#     plt.show()
