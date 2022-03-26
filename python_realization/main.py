@@ -16,9 +16,10 @@ np.random.seed(42)
 # Because temperature is an average kinetic energy of CHAOTIC movement, I'll need to substract
 # the speed of center of mass from the speed of every atom to calculate the temperature
 
-def main_cycle(spawn_on_grid=True, sigma_for_vel=0.5):
+def main_cycle(spawn_on_grid=True, sigma_for_vel=0.5, verbose=1, bins_num=50):
     '''
     main cycle, all the movements and calculations will happen here
+    verbose: % of program finished to print
     '''
     particles = initialize_system(on_grid=spawn_on_grid, sigma_for_velocity=sigma_for_vel)
     total_pot = 0
@@ -64,7 +65,7 @@ def main_cycle(spawn_on_grid=True, sigma_for_vel=0.5):
         # Calculating fixed bins for the plotting:
         if ts >= TIME_STEPS - steps_of_averaging:
             if ts ==  TIME_STEPS - steps_of_averaging:
-                starting_hist_dic = get_start_hist_param(*achieve_velocities(particles), T_current)
+                starting_hist_dic = get_start_hist_param(*achieve_velocities(particles), T_current, bin_number=bins_num)
                 edges_norm, heights_norm_avg = starting_hist_dic['norm']
                 edges_x, heights_x_avg = starting_hist_dic['x']
                 edges_y, heights_y_avg = starting_hist_dic['y']
@@ -78,7 +79,7 @@ def main_cycle(spawn_on_grid=True, sigma_for_vel=0.5):
             T_average += T_current
 
         #--------
-        if ts % int((0.05 * TIME_STEPS)) == 0:
+        if ts % int((0.01 * verbose * TIME_STEPS)) == 0:
             print(f'{ts} steps passed, T_current = {T_current}')
 
     # let's start plotting:
@@ -95,6 +96,6 @@ def main_cycle(spawn_on_grid=True, sigma_for_vel=0.5):
 
 # ---------------------------------------- #
 
-main_cycle(spawn_on_grid=True, sigma_for_vel=1.0)
+main_cycle(spawn_on_grid=True, sigma_for_vel=10.0, bins_num=20)
 
 # При переходе через границу прибавляем длину ячейки - потому что сосденяя клетка точно такая же как наша и там частица движется точно так же

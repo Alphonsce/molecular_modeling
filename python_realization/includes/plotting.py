@@ -37,13 +37,13 @@ def plot_total_energy(energies):
     plt.plot(time, energies, color='blue')
     plt.show()
 
-def get_start_hist_param(norm_vels, vels_x, vels_y, vels_z, kT):
+def get_start_hist_param(norm_vels, vels_x, vels_y, vels_z, kT, bin_number=50):
     '''
     The most important things here are starting edges, which are fixed for
     the whole averaging process,
     returning left edges for plotting a bar and all edges for calculating heights on the next steps
     '''
-    bin_number = 50
+
     heights_norm, edges_norm = np.histogram(norm_vels, bins=bin_number)
     heights_x, edges_x = np.histogram(vels_x, bins=bin_number)
     heights_y, edges_y = np.histogram(vels_y, bins=bin_number)
@@ -86,10 +86,11 @@ def get_hist_param(norm_vels, vels_x, vels_y, vels_z, edges_norm, edges_x, edges
 
 def new_hist_plot(heights, edges, kT_avg, output_path='./histograms.csv'):
     names = ['$V$', '$V_x$', '$V_y$', '$V_z$']
+    dict_for_df = {}
     sb = None
     for i in range(len(heights)):
         sb = plt.subplot(2, 2, 1 + i)
-        width = 0.9 * (edges[i][1] - edges[i][0])
+        width = 0.95 * (edges[i][1] - edges[i][0])
         if i == 0:
             x = np.linspace(0, max(edges[0]), 1000)
             plt.plot(
@@ -102,28 +103,39 @@ def new_hist_plot(heights, edges, kT_avg, output_path='./histograms.csv'):
             plt.bar(edges[i][:-1], heights[i], width)
         plt.ylabel('Процент частиц', fontsize=14)
         plt.xlabel(names[i], fontsize=14)
+
+        x_name = names[i][1:-1] + '_heights'
+        y_name = y_name = names[i][1:-1] + '_edg'
+        dict_for_df[x_name] = heights[i]
+        dict_for_df[y_name] = edges[i][:-1]
+
     plt.show()
     # writing into the file: (I am writing left edges into the file)
-    df = pd.DataFrame(
-        {
-            'V_heights': heights[0], 'Vx_heights': heights[1], 'Vy_heights': heights[2], 'Vz_heights': heights[3],
-            'V_edg': edges[0][:-1], 'Vx_edg': edges[1][:-1],
-            'Vy_edg': edges[2][:-1], 'Vz_edg': edges[3][:-1]
-        }
-    )
+    df = pd.DataFrame(dict_for_df)
     df.to_csv(output_path, index=False)
 
 def plot_gauss_lines(heights, edges, output_path='./gauss_lines.csv'):
     names= ['$V_x$', '$V_y$', '$V_z$']
+    dict_for_df = {}
     sp = None
     for i in range(len(heights)):
         sb = plt.subplot(2, 2, i + 1)
         x = np.array(edges[i][:-1]) ** 2
         y = np.log(heights[i])
-        plt.plot(x, y)
+        plt.scatter(x, y)
         plt.xlabel(names[i] + '$^2$')
-        plt.ylabel('$ln(% частиц)$')
+        plt.ylabel('$ln($% частиц)')
+        plt.title('Линеаризация распределения по ' + names[i])
+
+        x_name = 'log_' + names[i][1:-1] + '_heights'
+        y_name = names[i][1:-1] + '_edg_square'
+        dict_for_df[x_name] = x
+        dict_for_df[y_name] = y
+
     plt.show()
+    df = pd.DataFrame(dict_for_df)
+    df.to_csv(output_path, index=False)
+
 
 #--------------------Old version of hist plotting:--------------------------------------
 
