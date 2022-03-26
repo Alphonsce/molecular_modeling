@@ -25,12 +25,16 @@ def write_into_the_files(p):
 
 # ------------------------------------
 
-def plot_all_energies(energies, kin, pot):
+def plot_all_energies(energies, kin, pot, show=True, output_path='./energies.csv'):
     time = np.arange(0, len(energies) * dt, dt)
-    plt.plot(time, energies, color='blue')
-    plt.plot(time, kin, color='red')
-    plt.plot(time, pot, color='green')
-    plt.show()
+    if show:
+        plt.plot(time, energies, color='blue')
+        plt.plot(time, kin, color='red')
+        plt.plot(time, pot, color='green')
+        plt.show()
+    pd.DataFrame(
+        {'time': time, 'Total': energies, 'Kin': kin, 'Pot': pot}
+    ).to_csv(output_path, index=False)
 
 def plot_total_energy(energies):
     time = np.arange(0, len(energies) * dt, dt)
@@ -48,7 +52,7 @@ def get_start_hist_param(norm_vels, vels_x, vels_y, vels_z, kT, bin_number=50):
     heights_x, edges_x = np.histogram(vels_x, bins=bin_number)
     heights_y, edges_y = np.histogram(vels_y, bins=bin_number)
     heights_z, edges_z = np.histogram(vels_z, bins=bin_number)
-    # readjusting edges for our Temperature, this is the edges, NOT the lest edges for plotting:
+    # readjusting edges for our Temperature, this is the edges, NOT the left edges for plotting:
     big_enough_vel = 3 * sqrt(3 * kT)
     two_thirds_of_big_enough_vel = 2 * sqrt(3 * kT)
     edges_norm = np.linspace(
@@ -111,6 +115,7 @@ def new_hist_plot(heights, edges, kT_avg, output_path='./histograms.csv'):
 
     plt.show()
     # writing into the file: (I am writing left edges into the file)
+    dict_for_df['kT_average'] = [kT_avg] * len(heights[0])
     df = pd.DataFrame(dict_for_df)
     df.to_csv(output_path, index=False)
 
@@ -127,10 +132,10 @@ def plot_gauss_lines(heights, edges, output_path='./gauss_lines.csv'):
         plt.ylabel('$ln($% частиц)')
         plt.title('Линеаризация распределения по ' + names[i])
 
-        x_name = 'log_' + names[i][1:-1] + '_heights'
-        y_name = names[i][1:-1] + '_edg_square'
-        dict_for_df[x_name] = x
+        y_name = 'log_' + names[i][1:-1] + '_heights'
+        x_name = names[i][1:-1] + '_edg_square'
         dict_for_df[y_name] = y
+        dict_for_df[x_name] = x
 
     plt.show()
     df = pd.DataFrame(dict_for_df)

@@ -16,7 +16,7 @@ np.random.seed(42)
 # Because temperature is an average kinetic energy of CHAOTIC movement, I'll need to substract
 # the speed of center of mass from the speed of every atom to calculate the temperature
 
-def main_cycle(spawn_on_grid=True, sigma_for_vel=0.5, verbose=1, bins_num=50):
+def main_cycle(spawn_on_grid=True, sigma_for_vel=0.5, verbose=1, bins_num=50, averaging_part=0.8):
     '''
     main cycle, all the movements and calculations will happen here
     verbose: % of program finished to print
@@ -29,7 +29,7 @@ def main_cycle(spawn_on_grid=True, sigma_for_vel=0.5, verbose=1, bins_num=50):
     kins = np.array([])
     pots = np.array([])
     #--
-    steps_of_averaging = int(0.8 * TIME_STEPS)
+    steps_of_averaging = int(averaging_part * TIME_STEPS)
     T_average = 0
     heights_norm_avg = np.array([])
     heights_x_avg = np.array([])
@@ -79,7 +79,10 @@ def main_cycle(spawn_on_grid=True, sigma_for_vel=0.5, verbose=1, bins_num=50):
             T_average += T_current
 
         #--------
-        if ts % int((0.01 * verbose * TIME_STEPS)) == 0:
+        if int((0.01 * verbose * TIME_STEPS)) != 0:
+            if ts % int((0.01 * verbose * TIME_STEPS)) == 0:
+                print(f'{ts} steps passed, T_current = {T_current}')
+        else:
             print(f'{ts} steps passed, T_current = {T_current}')
 
     # let's start plotting:
@@ -93,9 +96,10 @@ def main_cycle(spawn_on_grid=True, sigma_for_vel=0.5, verbose=1, bins_num=50):
     edges = [edges_norm, edges_x, edges_y, edges_z]
     new_hist_plot(heights, edges, T_average)
     plot_gauss_lines(heights[1:], edges[1:])
+    plot_all_energies(energies, kins, pots, show=False)
 
 # ---------------------------------------- #
 
-main_cycle(spawn_on_grid=True, sigma_for_vel=10.0, bins_num=20)
+main_cycle(spawn_on_grid=True, sigma_for_vel=5.0, bins_num=150, averaging_part=0.6)
 
 # При переходе через границу прибавляем длину ячейки - потому что сосденяя клетка точно такая же как наша и там частица движется точно так же
