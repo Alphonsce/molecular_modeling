@@ -14,6 +14,7 @@ class Particle:
         self.pos = pos
         self.vel = vel
         self.acc = acc
+        self.diffusion_delta_pos = np.zeros(3)
 
         self.kin_energy = 0     # 0.5 * M * norm(vel) ** 2
         self.pot_energy = 0
@@ -22,16 +23,18 @@ class Particle:
         self.pos += self.vel * dt + 0.5 * self.acc * (dt ** 2)
         check_boundary(self)
 
+    def diffusion_move(self):
+        self.diffusion_delta_pos += self.vel * dt + 0.5 * self.acc * (dt ** 2)
+
 def N_grid(n):
     '''Size of the grid in amount of particles for one side'''
     return ceil(pow(n, 1 / 3))
 
-def initialize_system(on_grid=False, sigma_for_velocity=0.5):
+def initialize_system(on_grid=False, sigma_for_velocity=0.5, device='CPU'):
     '''
     initializes coordinates and velocities of particles
     '''
     particles = []
-    
     for i in range(N):
         vel = np.zeros(3)
         acc = np.zeros(3)
@@ -61,6 +64,7 @@ def initialize_system(on_grid=False, sigma_for_velocity=0.5):
     for i in range(N):
         for j in range(i + 1, N):
             calculate_acceleration(particles[i], particles[j])
+
     return particles
 
 def force(r):

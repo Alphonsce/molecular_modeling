@@ -6,6 +6,7 @@ import pandas as pd
 
 from constants import *
 from calculations import *
+# from gpu_calculations import *
 
 #----------File stuff------------------
 f_traj = open('trajectories.xyz', 'r+')
@@ -19,9 +20,14 @@ def write_first_rows_in_files():
         file.write(str(N) + '\n')
         file.write('\n')
 
-def write_into_the_files(p):
-    for file in FILES:
-        file.write('1 ' + str(p.pos[0]) + ' ' + str(p.pos[1]) + ' ' + str(p.pos[2]) + '\n')
+def write_into_the_files(p, device='CPU'):
+    if device=='CPU':
+        for file in FILES:
+            file.write('1 ' + str(p.pos[0]) + ' ' + str(p.pos[1]) + ' ' + str(p.pos[2]) + '\n')
+    else:
+        for file in FILES:
+            v = p.pos.cpu().numpy()
+            file.write('1 ' + str(v[0]) + ' ' + str(v[1]) + ' ' + str(v[2]) + '\n')
 
 # ------------------------------------
 
@@ -140,6 +146,9 @@ def plot_gauss_lines(heights, edges, output_path='./gauss_lines.csv'):
     plt.show()
     df = pd.DataFrame(dict_for_df)
     df.to_csv(output_path, index=False)
+
+def diffusion_plotting(particles):
+    pass
 
 
 #--------------------Old version of hist plotting:--------------------------------------

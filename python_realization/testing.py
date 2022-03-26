@@ -8,6 +8,7 @@ from scipy.stats import iqr
 from numpy.linalg import norm
 from math import pow, ceil, sqrt
 import seaborn as sns
+import torch
 
 from includes.constants import *
 
@@ -17,3 +18,4 @@ np.random.seed(42)
 
 # Все что надо - это научиться строить гистограмму по заданынм counts и edges
 
+ten = torch.tensor([1, 1, 1]).cuda()

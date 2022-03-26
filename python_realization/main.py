@@ -1,4 +1,3 @@
-from cProfile import label
 import sys
 sys.path.append('./python_realization/includes')
 import numpy as np
@@ -9,6 +8,7 @@ from math import sqrt, pow, ceil
 
 from includes.constants import *
 from includes.calculations import *
+# from includes.gpu_calculations import *
 from includes.plotting import *
 
 np.random.seed(42)
@@ -16,12 +16,12 @@ np.random.seed(42)
 # Because temperature is an average kinetic energy of CHAOTIC movement, I'll need to substract
 # the speed of center of mass from the speed of every atom to calculate the temperature
 
-def main_cycle(spawn_on_grid=True, sigma_for_vel=0.5, verbose=1, bins_num=50, averaging_part=0.8):
+def main_cycle(spawn_on_grid=True, sigma_for_vel=0.5, verbose=1, bins_num=50, averaging_part=0.8, device='CPU'):
     '''
     main cycle, all the movements and calculations will happen here
     verbose: % of program finished to print
     '''
-    particles = initialize_system(on_grid=spawn_on_grid, sigma_for_velocity=sigma_for_vel)
+    particles = initialize_system(on_grid=spawn_on_grid, sigma_for_velocity=sigma_for_vel, device=device)
     total_pot = 0
     total_kin = 0
     #---
@@ -62,7 +62,7 @@ def main_cycle(spawn_on_grid=True, sigma_for_vel=0.5, verbose=1, bins_num=50, av
         pots = np.append(pots, total_pot)      
         T_current = (2 / 3) * (total_kin) / N
 
-        # Calculating fixed bins for the plotting:
+        # Starting things for a set conditions:
         if ts >= TIME_STEPS - steps_of_averaging:
             if ts ==  TIME_STEPS - steps_of_averaging:
                 starting_hist_dic = get_start_hist_param(*achieve_velocities(particles), T_current, bin_number=bins_num)
@@ -77,7 +77,8 @@ def main_cycle(spawn_on_grid=True, sigma_for_vel=0.5, verbose=1, bins_num=50, av
             heights_y_avg += hist_dic['y']
             heights_z_avg += hist_dic['z']
             T_average += T_current
-
+            for p in particles:
+                p.diffusion_move()
         #--------
         if int((0.01 * verbose * TIME_STEPS)) != 0:
             if ts % int((0.01 * verbose * TIME_STEPS)) == 0:
@@ -97,9 +98,8 @@ def main_cycle(spawn_on_grid=True, sigma_for_vel=0.5, verbose=1, bins_num=50, av
     new_hist_plot(heights, edges, T_average)
     plot_gauss_lines(heights[1:], edges[1:])
     plot_all_energies(energies, kins, pots, show=False)
-
 # ---------------------------------------- #
 
-main_cycle(spawn_on_grid=True, sigma_for_vel=5.0, bins_num=150, averaging_part=0.6)
+main_cycle(spawn_on_grid=True, sigma_for_vel=5.0, bins_num=30, averaging_part=0.6, device='CPU')
 
 # При переходе через границу прибавляем длину ячейки - потому что сосденяя клетка точно такая же как наша и там частица движется точно так же
