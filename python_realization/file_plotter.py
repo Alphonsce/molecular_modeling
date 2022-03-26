@@ -21,7 +21,7 @@ def plot_hists_from_file(path='./histograms.csv'):
     sb = None
     for i in range(len(names)):
         sb = plt.subplot(2, 2, 1 + i)
-        width = 0.95 * (df[edges[i]][1] - df[edges[i]][0])
+        width = 1. * (df[edges[i]][1] - df[edges[i]][0])
         if i == 0:
             x = np.linspace(0, max(df[edges[0]]), 1000)
             plt.plot(
@@ -34,6 +34,10 @@ def plot_hists_from_file(path='./histograms.csv'):
             plt.bar(df[edges[i]], df[heights[i]], width)
         plt.ylabel('Процент частиц', fontsize=14)
         plt.xlabel(names[i], fontsize=14)
+    plt.show()
+    plt.scatter(
+        df['V_edg'] ** 2, np.log(df['V_heights'])
+    )
     plt.show()
 
 def plot_gauss_lines_from_file(path='./gauss_lines.csv'):
@@ -50,8 +54,8 @@ def plot_gauss_lines_from_file(path='./gauss_lines.csv'):
         plt.title('Линеаризация распределения по ' + names[i][-2].capitalize(), fontsize=10)
     plt.show()
 
-plot_energies_from_file(who_to_plot=['Total'])
+plot_energies_from_file(who_to_plot=['Total'], path='./graphs/energies_20t_150p.csv')
 
-plot_hists_from_file()
+plot_hists_from_file(path='./graphs/histograms_20t_150p.csv')
 
-plot_gauss_lines_from_file()
+plot_gauss_lines_from_file(path='./graphs/gauss_lines_20t_150p.csv')
