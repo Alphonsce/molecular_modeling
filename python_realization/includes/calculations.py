@@ -44,10 +44,11 @@ def initialize_system(on_grid=False, sigma_for_velocity=0.5, device='CPU'):
             d = L / N_grid(N)
             vel = np.zeros(3)
             acc = np.zeros(3)
-            x = d * (i % n_grid) + np.random.uniform(-d / 20, d / 20)
-            y = d * (i // n_grid) + np.random.uniform(-d / 20, d / 20)
-            z = d * (i // n_grid **  2) + np.random.uniform(-d / 20, d / 20)
-            pos = np.array([x, y, z])
+            rnd_vec = np.array([np.random.uniform(-d / 20, d / 20), np.random.uniform(-d / 20, d / 20), np.random.uniform(-d / 20, d / 20)])
+            x = i % n_grid
+            z = i // n_grid ** 2
+            y = i // n_grid - n_grid * z
+            pos = d * np.array([x, y, z]) + rnd_vec
             for k in range(3):
                 vel[k] = random.normalvariate(0, sigma_for_velocity)
         elif not on_grid:

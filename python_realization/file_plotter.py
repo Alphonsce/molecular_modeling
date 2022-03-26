@@ -35,10 +35,10 @@ def plot_hists_from_file(path='./histograms.csv'):
         plt.ylabel('Процент частиц', fontsize=14)
         plt.xlabel(names[i], fontsize=14)
     plt.show()
-    plt.scatter(
-        df['V_edg'] ** 2, np.log(df['V_heights'])
-    )
-    plt.show()
+    # plt.scatter(
+    #     df['V_edg'] ** 2, np.log(df['V_heights'])
+    # )
+    # plt.show()
 
 def plot_gauss_lines_from_file(path='./gauss_lines.csv'):
     df = pd.read_csv(path)
