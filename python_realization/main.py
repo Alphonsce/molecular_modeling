@@ -100,6 +100,6 @@ def main_cycle(spawn_on_grid=True, sigma_for_vel=0.5, verbose=1, bins_num=50, av
     plot_all_energies(energies, kins, pots, show=False)
 # ---------------------------------------- #
 
-main_cycle(spawn_on_grid=True, sigma_for_vel=5.0, bins_num=30, averaging_part=0.6, device='CPU')
+main_cycle(spawn_on_grid=True, sigma_for_vel=1.5, bins_num=100, averaging_part=0.8, device='CPU')
 
 # При переходе через границу прибавляем длину ячейки - потому что сосденяя клетка точно такая же как наша и там частица движется точно так же
