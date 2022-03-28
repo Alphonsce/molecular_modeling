@@ -28,7 +28,7 @@ def main_cycle(spawn_on_grid=True, sigma_for_vel=0.5, verbose=1, bins_num=50, av
     energies = np.array([])
     kins = np.array([])
     pots = np.array([])
-    #--
+    #---
     steps_of_averaging = int(averaging_part * TIME_STEPS)
     T_average = 0
     heights_norm_avg = np.array([])
@@ -79,12 +79,14 @@ def main_cycle(spawn_on_grid=True, sigma_for_vel=0.5, verbose=1, bins_num=50, av
             T_average += T_current
             for p in particles:
                 p.diffusion_move()
+            if ts % 5 == 0:
+                print(particles[0].diffusion_delta_pos)
         #--------
-        if int((0.01 * verbose * TIME_STEPS)) != 0:
-            if ts % int((0.01 * verbose * TIME_STEPS)) == 0:
-                print(f'{ts} steps passed, T_current = {T_current}')
-        else:
-            print(f'{ts} steps passed, T_current = {T_current}')
+        # if int((0.01 * verbose * TIME_STEPS)) != 0:
+        #     if ts % int((0.01 * verbose * TIME_STEPS)) == 0:
+        #         print(f'{ts} steps passed, T_current = {T_current}')
+        # else:
+        #     print(f'{ts} steps passed, T_current = {T_current}')
 
     # let's start plotting:
     T_average /= steps_of_averaging
@@ -100,9 +102,14 @@ def main_cycle(spawn_on_grid=True, sigma_for_vel=0.5, verbose=1, bins_num=50, av
     plot_gauss_lines(heights[1:], edges[1:], show=False)
     plot_all_energies(energies, kins, pots, show=False)
     #----- about diffusion: -----
-    diffusion_plotting(particles)
+    # diffusion_plotting(particles)
 # ---------------------------------------- #
 
 main_cycle(spawn_on_grid=True, sigma_for_vel=1.5, bins_num=10, averaging_part=0.8, device='CPU')
 
 # При переходе через границу прибавляем длину ячейки - потому что сосденяя клетка точно такая же как наша и там частица движется точно так же
+
+# Усреднять квадрат модуля вектора пермещения по отерзку времени (каждый отрезок смотрим сколько прошло)
+
+# Берем, например перемещение от 10 до 20 шагов времени, потом от 30 до 40...., потом усредняем величину;
+# И так мы строим зависимость среднего перемещения от размера \Delta t.

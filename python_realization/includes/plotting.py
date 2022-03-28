@@ -148,15 +148,6 @@ def plot_gauss_lines(heights, edges, output_path='./gauss_lines.csv', show=True)
     df = pd.DataFrame(dict_for_df)
     df.to_csv(output_path, index=False)
 
-def diffusion_plotting(particles):
-    numb_of_particle = np.array([i + 1 for i in range(len(particles))])
-    diff_dist = np.array([])
-    for p in particles:
-        dist = norm(p.diffusion_delta_pos)
-        diff_dist = np.append(diff_dist, dist)
-    print(diff_dist)
-
-
 #--------------------Old version of hist plotting:--------------------------------------
 
 # def plot_vel_distribution(vel_norms, vels_x, vels_y, vels_z, temperature, outpath='vels_plotting.csv'):

@@ -1,4 +1,5 @@
 from importlib.metadata import files
+import matplotlib
 import numpy as np
 import random
 from numpy.linalg import norm
@@ -14,7 +15,7 @@ class Particle:
         self.pos = pos
         self.vel = vel
         self.acc = acc
-        self.diffusion_delta_pos = np.zeros(3)
+        self.diffusion_pos = np.zeros(3)
 
         self.kin_energy = 0     # 0.5 * M * norm(vel) ** 2
         self.pot_energy = 0
@@ -23,7 +24,7 @@ class Particle:
         self.pos += self.vel * dt + 0.5 * self.acc * (dt ** 2)
         check_boundary(self)
 
-    def diffusion_move(self):
+    def diffusion_move(self, ):
         self.diffusion_delta_pos += self.vel * dt + 0.5 * self.acc * (dt ** 2)
 
 def N_grid(n):
@@ -138,3 +139,12 @@ def calculate_com_vel(particles):
             Vc[i] += p.vel[i]
     Vc /= N
     return Vc
+
+def diffusion_data_collection(particles, diff_positions):
+    '''
+    diff_positons: 
+    '''
+    diff_positions = np.array([])
+    for p in particles:
+        diff_positions = np.append(diff_positions, p.diffusion_pos)
+    
