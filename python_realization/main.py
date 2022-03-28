@@ -88,18 +88,21 @@ def main_cycle(spawn_on_grid=True, sigma_for_vel=0.5, verbose=1, bins_num=50, av
 
     # let's start plotting:
     T_average /= steps_of_averaging
+    n = N * 1
     heights = [
-        heights_norm_avg / (steps_of_averaging * N), 
-        heights_x_avg / (steps_of_averaging * N),
-        heights_y_avg / (steps_of_averaging * N),
-        heights_z_avg / (steps_of_averaging * N)
+        heights_norm_avg / (steps_of_averaging * n), 
+        heights_x_avg / (steps_of_averaging * n),
+        heights_y_avg / (steps_of_averaging * n),
+        heights_z_avg / (steps_of_averaging * n)
     ]
     edges = [edges_norm, edges_x, edges_y, edges_z]
-    new_hist_plot(heights, edges, T_average)
-    plot_gauss_lines(heights[1:], edges[1:])
+    new_hist_plot(heights, edges, T_average, show=False)
+    plot_gauss_lines(heights[1:], edges[1:], show=False)
     plot_all_energies(energies, kins, pots, show=False)
+    #----- about diffusion: -----
+    diffusion_plotting(particles)
 # ---------------------------------------- #
 
-main_cycle(spawn_on_grid=True, sigma_for_vel=1.5, bins_num=100, averaging_part=0.8, device='CPU')
+main_cycle(spawn_on_grid=True, sigma_for_vel=1.5, bins_num=10, averaging_part=0.8, device='CPU')
 
 # При переходе через границу прибавляем длину ячейки - потому что сосденяя клетка точно такая же как наша и там частица движется точно так же

@@ -17,20 +17,7 @@ np.random.seed(42)
 # edg = np.histogram_bin_edges(df.V, 50)      # ищет границы бинов по переданному ей распределению параметра
 
 # Все что надо - это научиться строить гистограмму по заданынм counts и edges
-n_grid = N_grid(N)
-d = L / n_grid
-# print(n_grid)
-for k in range(N // n_grid ** 2):
-    for j in range(N // n_grid):
-        for i in range(N % n_grid):
-            x = i * d
-            y = j * d
-            z = k * d
-            print(f'{i, j, k}: {x, y, z}')
 
-for i in range(N):
-    x = i % n_grid
-    z = i // n_grid ** 2
-    y = i // n_grid - n_grid * z
+ar = np.array([1, 3, 2])
 
-    print(f'{i}: {x, y, z}')
+print(sorted(ar))

@@ -94,7 +94,7 @@ def get_hist_param(norm_vels, vels_x, vels_y, vels_z, edges_norm, edges_x, edges
         'z': np.array(heights_z)
     }
 
-def new_hist_plot(heights, edges, kT_avg, output_path='./histograms.csv'):
+def new_hist_plot(heights, edges, kT_avg, output_path='./histograms.csv', show=True):
     names = ['$V$', '$V_x$', '$V_y$', '$V_z$']
     dict_for_df = {}
     sb = None
@@ -118,14 +118,15 @@ def new_hist_plot(heights, edges, kT_avg, output_path='./histograms.csv'):
         y_name = y_name = names[i][1:-1] + '_edg'
         dict_for_df[x_name] = heights[i]
         dict_for_df[y_name] = edges[i][:-1]
-
-    plt.show()
+        
+    if show:
+        plt.show()
     # writing into the file: (I am writing left edges into the file)
     dict_for_df['kT_average'] = [kT_avg] * len(heights[0])
     df = pd.DataFrame(dict_for_df)
     df.to_csv(output_path, index=False)
 
-def plot_gauss_lines(heights, edges, output_path='./gauss_lines.csv'):
+def plot_gauss_lines(heights, edges, output_path='./gauss_lines.csv', show=True):
     names= ['$V_x$', '$V_y$', '$V_z$']
     dict_for_df = {}
     sp = None
@@ -142,13 +143,18 @@ def plot_gauss_lines(heights, edges, output_path='./gauss_lines.csv'):
         x_name = names[i][1:-1] + '_edg_square'
         dict_for_df[y_name] = y
         dict_for_df[x_name] = x
-
-    plt.show()
+    if show:
+        plt.show()
     df = pd.DataFrame(dict_for_df)
     df.to_csv(output_path, index=False)
 
 def diffusion_plotting(particles):
-    pass
+    numb_of_particle = np.array([i + 1 for i in range(len(particles))])
+    diff_dist = np.array([])
+    for p in particles:
+        dist = norm(p.diffusion_delta_pos)
+        diff_dist = np.append(diff_dist, dist)
+    print(diff_dist)
 
 
 #--------------------Old version of hist plotting:--------------------------------------
