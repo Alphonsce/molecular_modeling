@@ -72,8 +72,6 @@ def plot_hists_from_file(path='./histograms.csv', draw_gauss=True):
         plt.ylabel('$f_{probability}$', fontsize=14)
         plt.xlabel(names[i], fontsize=14)
     plt.show()
-    h = (df['V_x_heights']).sum()
-    print(h, width)
 
 def plot_gauss_lines_from_file(path='./gauss_lines.csv', train_part = 0.7):
     df = pd.read_csv(path)
@@ -111,15 +109,15 @@ def plot_gauss_lines_from_file(path='./gauss_lines.csv', train_part = 0.7):
 
 # For t=20, dt=0.0005, N=150, sigma_v = 5:
 
-# plot_hists_from_file(path='./graphs/histograms_20t_150p.csv')
-# plot_gauss_lines_from_file(path='./graphs/gauss_lines_20t_150p.csv')
-# plot_energies_from_file(who_to_plot=['Total'], path='./graphs/energies_20t_150p.csv')
+plot_hists_from_file(path='./graphs/histograms_20t_150p.csv')
+plot_gauss_lines_from_file(path='./graphs/gauss_lines_20t_150p.csv')
+plot_energies_from_file(who_to_plot=['Total'], path='./graphs/energies_20t_150p.csv')
 #---------------
 
 # For t=50, dt=0.0005, N=100, sigma_v = 1.5:
 
 # plot_hists_from_file(draw_gauss=True, path = './graphs/histograms_100k_steps_100particles_dt_0_0005.csv')
-plot_gauss_lines_from_file(path = './graphs/lines_100k_steps_100particles_dt_0_0005.csv', train_part=0.6)
+# plot_gauss_lines_from_file(path = './graphs/lines_100k_steps_100particles_dt_0_0005.csv', train_part=0.6)
 # plot_energies_from_file(who_to_plot=['Total'], path = './graphs/energies_100k_steps_100particles_dt_0_0005.csv')
 #---------------
 

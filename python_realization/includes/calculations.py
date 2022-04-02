@@ -25,7 +25,7 @@ class Particle:
         check_boundary(self)
 
     def diffusion_move(self, ):
-        self.diffusion_delta_pos += self.vel * dt + 0.5 * self.acc * (dt ** 2)
+        self.diffusion_pos += self.vel * dt + 0.5 * self.acc * (dt ** 2)
 
 def N_grid(n):
     '''Size of the grid in amount of particles for one side'''
@@ -139,12 +139,3 @@ def calculate_com_vel(particles):
             Vc[i] += p.vel[i]
     Vc /= N
     return Vc
-
-def diffusion_data_collection(particles, diff_positions):
-    '''
-    diff_positons: 
-    '''
-    diff_positions = np.array([])
-    for p in particles:
-        diff_positions = np.append(diff_positions, p.diffusion_pos)
-    

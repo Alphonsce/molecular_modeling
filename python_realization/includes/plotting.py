@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from numpy.linalg import norm
 from math import sqrt, pow, ceil
 import pandas as pd
+import csv
 
 from constants import *
 from calculations import *
@@ -10,8 +11,7 @@ from calculations import *
 
 #----------File stuff------------------
 f_traj = open('trajectories.xyz', 'r+')
-f_vel = open('velocity.xyz', 'r+')
-FILES = [f_traj, f_vel]
+FILES = [f_traj]
 for file in FILES:
     file.truncate(0)
 
@@ -148,42 +148,28 @@ def plot_gauss_lines(heights, edges, output_path='./gauss_lines.csv', show=True)
     df = pd.DataFrame(dict_for_df)
     df.to_csv(output_path, index=False)
 
-#--------------------Old version of hist plotting:--------------------------------------
+#--diffusion:--
 
-# def plot_vel_distribution(vel_norms, vels_x, vels_y, vels_z, temperature, outpath='vels_plotting.csv'):
-#     '''temperature in kT units, which are in epsilon units, so basically temprature = kT / epsilon'''
-#     sigmas = []
-#     mus = []
-#     for arr in([vel_norms, vels_x, vels_y, vels_z]):
-#         sigmas.append(np.std(arr))
-#         mus.append(np.mean(arr))
+def write_step_of_diffusion_and_create_writer(diffusion_step, path='diffusion.csv'):
+    fieldnames = []
+    for i in range(N):
+        fieldnames.append(str(i) + 'x')
+        fieldnames.append(str(i) + 'y')
+        fieldnames.append(str(i) + 'z')
+    f = open('diffusion.csv', 'w')
+    writer = csv.DictWriter(f, fieldnames=fieldnames)
+    f.write('dt: ' + str(diffusion_step) + '\n')
+    writer.writeheader()
+    return writer
 
-#     sp = None
-#     iter = 1
-#     names = [r'$|V|$', r'$V_x$', r'$V_y$', r'$V_z$']
-#     bin_size = int(round(pow(N, 0.65), 0))
-#     for vels in [vel_norms, vels_x, vels_y, vels_z]:
-#         sp = plt.subplot(2, 2, iter)
-#         if iter != 1:
-#             plt.hist(vels, bins=bin_size, label=f'$\sigma= ${round(sigmas[iter - 1], 2)} $\mu= ${round(mus[iter-1], 2)}', density=True)
-#         else:
-#             #x = np.arange(min(vel_norms), max(vel_norms), 0.01)
-#             x = np.linspace(0, max(vel_norms), 1000)
-#             plt.plot(
-#                 x,
-#                 (1 / pow(2 * np.pi * temperature , 1.5)) * 4 * np.pi * (x ** 2) * np.exp( (-(x ** 2)) / (2 * temperature) ), color = 'red',
-#                 label='Распределение Максвелла при T'
-#             )
-#             plt.hist(vels, bins=bin_size, label=f'$kT={round(temperature, 3)} \epsilon$', density=True)
-#         plt.ylabel('Число частиц', fontsize=14)
-#         plt.xlabel(names[iter - 1], fontsize=14)
-#         plt.grid(alpha=0.2)
-#         plt.legend(loc='best', fontsize=11)
+def write_diffusion(writer: csv.DictWriter, particles):
+    writing_dict = {}
+    for i in range(N):
+        pos = particles[i].diffusion_pos
+        writing_dict[str(i) + 'x'] = pos[0]
+        writing_dict[str(i) + 'y'] = pos[1]
+        writing_dict[str(i) + 'z'] = pos[2]
+    writer.writerow(writing_dict)
 
-#         iter += 1
-    
-#     data = {'V': vel_norms, 'Vx': vels_x, 'Vy': vels_y, 'Vz': vels_z}
-#     df = pd.DataFrame(data)
-#     df.to_csv(outpath)
-
-#     plt.show()
+# короче надо сделать просто csv, где в каждый момент времени мы записиваем для всех частиц их координаты, а оттуда уже
+# можно будет достать все что нужно.

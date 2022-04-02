@@ -16,7 +16,7 @@ np.random.seed(42)
 # Because temperature is an average kinetic energy of CHAOTIC movement, I'll need to substract
 # the speed of center of mass from the speed of every atom to calculate the temperature
 
-def main_cycle(spawn_on_grid=True, sigma_for_vel=0.5, verbose=1, bins_num=50, averaging_part=0.8, device='CPU'):
+def main_cycle(spawn_on_grid=True, sigma_for_vel=0.5, verbose=1, bins_num=50, averaging_part=0.8, diffusion_step=1, device='CPU'):
     '''
     main cycle, all the movements and calculations will happen here
     verbose: % of program finished to print
@@ -35,6 +35,8 @@ def main_cycle(spawn_on_grid=True, sigma_for_vel=0.5, verbose=1, bins_num=50, av
     heights_x_avg = np.array([])
     heights_y_avg = np.array([])
     heights_z_avg = np.array([])
+    #---
+    diffusion_writer = write_step_of_diffusion_and_create_writer(diffusion_step=dt * diffusion_step, path='diffusion.csv')
     #---
     for ts in range(TIME_STEPS):
         write_first_rows_in_files()
@@ -79,14 +81,14 @@ def main_cycle(spawn_on_grid=True, sigma_for_vel=0.5, verbose=1, bins_num=50, av
             T_average += T_current
             for p in particles:
                 p.diffusion_move()
-            if ts % 5 == 0:
-                print(particles[0].diffusion_delta_pos)
+            if (ts - steps_of_averaging) % diffusion_step == 0:
+                write_diffusion(diffusion_writer, particles)
         #--------
-        # if int((0.01 * verbose * TIME_STEPS)) != 0:
-        #     if ts % int((0.01 * verbose * TIME_STEPS)) == 0:
-        #         print(f'{ts} steps passed, T_current = {T_current}')
-        # else:
-        #     print(f'{ts} steps passed, T_current = {T_current}')
+        if int((0.01 * verbose * TIME_STEPS)) != 0:
+            if ts % int((0.01 * verbose * TIME_STEPS)) == 0:
+                print(f'{ts} steps passed, T_current = {T_current}')
+        else:
+            print(f'{ts} steps passed, T_current = {T_current}')
 
     # let's start plotting:
     T_average /= steps_of_averaging
@@ -105,7 +107,7 @@ def main_cycle(spawn_on_grid=True, sigma_for_vel=0.5, verbose=1, bins_num=50, av
     # diffusion_plotting(particles)
 # ---------------------------------------- #
 
-main_cycle(spawn_on_grid=True, sigma_for_vel=1.5, bins_num=10, averaging_part=0.8, device='CPU')
+main_cycle(spawn_on_grid=True, sigma_for_vel=1.5, bins_num=10, averaging_part=0.8, diffusion_step=10)
 
 # При переходе через границу прибавляем длину ячейки - потому что сосденяя клетка точно такая же как наша и там частица движется точно так же
 
