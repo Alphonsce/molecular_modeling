@@ -6,6 +6,9 @@ import random
 from numpy.linalg import norm
 from math import sqrt, pow, ceil
 
+import ray
+ray.init()
+
 from includes.constants import *
 from includes.calculations import *
 # from includes.gpu_calculations import *
@@ -20,6 +23,7 @@ def main_cycle(spawn_on_grid=True, sigma_for_vel=0.5, verbose=1, bins_num=50, av
     '''
     main cycle, all the movements and calculations will happen here
     verbose: % of program finished to print
+    diffusion_step: once every diffusion_step all coordinates will be written for diffusion plotting
     '''
     particles = initialize_system(on_grid=spawn_on_grid, sigma_for_velocity=sigma_for_vel, device=device)
     total_pot = 0
@@ -36,7 +40,7 @@ def main_cycle(spawn_on_grid=True, sigma_for_vel=0.5, verbose=1, bins_num=50, av
     heights_y_avg = np.array([])
     heights_z_avg = np.array([])
     #---
-    diffusion_writer = write_step_of_diffusion_and_create_writer(diffusion_step=dt * diffusion_step, path='diffusion.csv')
+    diffusion_writer = write_step_of_diffusion_and_create_writer(diffusion_step=diffusion_step, path='diffusion.csv')
     #---
     for ts in range(TIME_STEPS):
         write_first_rows_in_files()
@@ -82,7 +86,7 @@ def main_cycle(spawn_on_grid=True, sigma_for_vel=0.5, verbose=1, bins_num=50, av
             for p in particles:
                 p.diffusion_move()
             if (ts - steps_of_averaging) % diffusion_step == 0:
-                write_diffusion(diffusion_writer, particles)
+                write_diffusion(diffusion_writer, particles, time=ts * dt)
         #--------
         if int((0.01 * verbose * TIME_STEPS)) != 0:
             if ts % int((0.01 * verbose * TIME_STEPS)) == 0:
@@ -107,7 +111,7 @@ def main_cycle(spawn_on_grid=True, sigma_for_vel=0.5, verbose=1, bins_num=50, av
     # diffusion_plotting(particles)
 # ---------------------------------------- #
 
-main_cycle(spawn_on_grid=True, sigma_for_vel=1.5, bins_num=10, averaging_part=0.8, diffusion_step=10)
+main_cycle(spawn_on_grid=True, sigma_for_vel=1.5, bins_num=150, averaging_part=0.8, diffusion_step=10)
 
 # При переходе через границу прибавляем длину ячейки - потому что сосденяя клетка точно такая же как наша и там частица движется точно так же
 

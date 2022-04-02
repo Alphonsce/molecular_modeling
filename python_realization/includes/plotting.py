@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from numpy.linalg import norm
 from math import sqrt, pow, ceil
+# import modin.pandas as pd
 import pandas as pd
 import csv
 
@@ -153,19 +154,22 @@ def plot_gauss_lines(heights, edges, output_path='./gauss_lines.csv', show=True)
 def write_step_of_diffusion_and_create_writer(diffusion_step, path='diffusion.csv'):
     fieldnames = []
     for i in range(N):
+        fieldnames.append('t')
         fieldnames.append(str(i) + 'x')
         fieldnames.append(str(i) + 'y')
         fieldnames.append(str(i) + 'z')
     f = open('diffusion.csv', 'w')
     writer = csv.DictWriter(f, fieldnames=fieldnames)
-    f.write('dt: ' + str(diffusion_step) + '\n')
+    f.write('diffusion_step: ' + str(diffusion_step ) + '\n')
+    f.write('dt: ' + str(dt * diffusion_step) + '\n')
     writer.writeheader()
     return writer
 
-def write_diffusion(writer: csv.DictWriter, particles):
+def write_diffusion(writer: csv.DictWriter, particles, time):
     writing_dict = {}
     for i in range(N):
         pos = particles[i].diffusion_pos
+        writing_dict['t'] = time
         writing_dict[str(i) + 'x'] = pos[0]
         writing_dict[str(i) + 'y'] = pos[1]
         writing_dict[str(i) + 'z'] = pos[2]
