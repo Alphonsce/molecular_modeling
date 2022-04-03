@@ -6,8 +6,8 @@ import random
 from numpy.linalg import norm
 from math import sqrt, pow, ceil
 
-import ray
-ray.init()
+# import ray
+# ray.init()
 
 from includes.constants import *
 from includes.calculations import *
@@ -111,7 +111,7 @@ def main_cycle(spawn_on_grid=True, sigma_for_vel=0.5, verbose=1, bins_num=50, av
     # diffusion_plotting(particles)
 # ---------------------------------------- #
 
-main_cycle(spawn_on_grid=True, sigma_for_vel=1.5, bins_num=200, averaging_part=0.8, diffusion_step=10)
+main_cycle(spawn_on_grid=True, sigma_for_vel=1.5, bins_num=250, averaging_part=0.6, diffusion_step=10)
 
 # При переходе через границу прибавляем длину ячейки - потому что сосденяя клетка точно такая же как наша и там частица движется точно так же
 
