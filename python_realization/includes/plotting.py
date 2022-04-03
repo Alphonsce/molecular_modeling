@@ -169,7 +169,7 @@ def write_diffusion(writer: csv.DictWriter, particles, time):
     writing_dict = {}
     for i in range(N):
         pos = particles[i].diffusion_pos
-        writing_dict['t'] = time
+        writing_dict['t'] = round(time, 6)
         writing_dict[str(i) + 'x'] = pos[0]
         writing_dict[str(i) + 'y'] = pos[1]
         writing_dict[str(i) + 'z'] = pos[2]

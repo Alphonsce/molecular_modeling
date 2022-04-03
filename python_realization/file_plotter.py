@@ -69,6 +69,7 @@ def plot_hists_from_file(path='./histograms.csv', draw_gauss=True):
             plt.bar(df[edges[i]], rho_prob, width, label=f'$kT={round(kT_avg, 3)} \epsilon$')
             plt.legend(loc='best', fontsize=12)
         else:
+            rho_prob = df[heights[i]] / width
             plt.bar(df[edges[i]], rho_prob, width)
         plt.ylabel('$f_{probability}$', fontsize=14)
         plt.xlabel(names[i], fontsize=14)
@@ -83,9 +84,9 @@ def plot_gauss_lines_from_file(path='./gauss_lines.csv', train_part = 0.7):
     ys = ['log_V_x_heights', 'log_V_y_heights', 'log_V_z_heights']
     sp = None
     for i in range(len(names)):
-        width = abs(1. * (df[xs[i]][1] - df[xs[i]][0]))
+        # width = abs(1. * (df[xs[i]][1] - df[xs[i]][0]))
         sb = plt.subplot(2, 2, i + 1)
-        df[ys[i]] -= np.log(width)     # getting \rho of proba from proba of being in a certain bin
+        # df[ys[i]] -= np.log(width)     # getting \rho of proba from proba of being in a certain bin
         sub_df = df[[xs[i], ys[i]]]
         sub_df = sub_df.sort_values(by=xs[i])
         # Используем train_part датасета для "обучения" регрессии по МНК
@@ -117,9 +118,9 @@ def plot_gauss_lines_from_file(path='./gauss_lines.csv', train_part = 0.7):
 
 # For t=50, dt=0.0005, N=100, sigma_v = 1.5:
 
-plot_hists_from_file(draw_gauss=True, path = './graphs/histograms_100k_steps_100particles_dt_0_0005.csv')
-plot_gauss_lines_from_file(path = './graphs/lines_100k_steps_100particles_dt_0_0005.csv', train_part=0.6)
-plot_energies_from_file(who_to_plot=['Total'], path = './graphs/energies_100k_steps_100particles_dt_0_0005.csv')
+# plot_hists_from_file(draw_gauss=True, path = './graphs/histograms_100k_steps_100particles_dt_0_0005.csv')
+# plot_gauss_lines_from_file(path = './graphs/lines_100k_steps_100particles_dt_0_0005.csv', train_part=0.6)
+# plot_energies_from_file(who_to_plot=['Total'], path = './graphs/energies_100k_steps_100particles_dt_0_0005.csv')
 #---------------
 
 # For the last attempt:
