@@ -153,8 +153,8 @@ def plot_gauss_lines(heights, edges, output_path='./gauss_lines.csv', show=True)
 
 def write_step_of_diffusion_and_create_writer(diffusion_step, path='diffusion.csv'):
     fieldnames = []
+    fieldnames.append('t')
     for i in range(N):
-        fieldnames.append('t')
         fieldnames.append(str(i) + 'x')
         fieldnames.append(str(i) + 'y')
         fieldnames.append(str(i) + 'z')
@@ -167,9 +167,9 @@ def write_step_of_diffusion_and_create_writer(diffusion_step, path='diffusion.cs
 
 def write_diffusion(writer: csv.DictWriter, particles, time):
     writing_dict = {}
+    writing_dict['t'] = round(time, 6)
     for i in range(N):
         pos = particles[i].diffusion_pos
-        writing_dict['t'] = round(time, 6)
         writing_dict[str(i) + 'x'] = pos[0]
         writing_dict[str(i) + 'y'] = pos[1]
         writing_dict[str(i) + 'z'] = pos[2]

@@ -123,11 +123,17 @@ def plot_gauss_lines_from_file(path='./gauss_lines.csv', train_part = 0.7):
 # plot_energies_from_file(who_to_plot=['Total'], path = './graphs/energies_100k_steps_100particles_dt_0_0005.csv')
 #---------------
 
-''' For t=50, dt=0.0005, N=100, sigma_v=1.5, bins=200, first diffusion try: '''
+''' For t=50, dt=0.0005, N=100, sigma_v=1.5, bins=200, first diffusion try: diffusion_step = 10 dt'''
 
-plot_hists_from_file(draw_gauss=True, path = './graphs/histograms_1diff.csv')
-plot_gauss_lines_from_file(path = './graphs/lines_1diff.csv', train_part=0.7)
-plot_energies_from_file(who_to_plot=['Total'], path = './graphs/energies_1diff.csv')
+# plot_hists_from_file(draw_gauss=True, path = './graphs/histograms_1diff.csv')
+# plot_gauss_lines_from_file(path = './graphs/lines_1diff.csv', train_part=0.7)
+# plot_energies_from_file(who_to_plot=['Total'], path = './graphs/energies_1diff.csv')
+
+''' For t=150_000 * dt, dt=0.00025, N=100, sigma_vel=1.2, bins=250, second_diffusion try: diffusion_step = 2 dt'''
+
+plot_hists_from_file(draw_gauss=True, path = './graphs/hists_diff2.csv')
+plot_gauss_lines_from_file(path = './graphs/lines_diff2.csv', train_part=0.7)
+plot_energies_from_file(who_to_plot=['Total'], path = './graphs/energies_diff2.csv')
 
 ''' For the last attempt: '''
 
