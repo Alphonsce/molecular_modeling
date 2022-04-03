@@ -112,7 +112,7 @@ def plot_gauss_lines_from_file(path='./gauss_lines.csv', train_part = 0.7):
 ''' For t=20, dt=0.0005, N=150, sigma_v = 5: '''
 
 # plot_hists_from_file(path='./graphs/histograms_20t_150p.csv')
-# plot_gauss_lines_from_file(path='./graphs/gauss_lines_20t_150p.csv')
+# plot_gauss_lines_from_file(path='./graphs/lines_20t_150p.csv')
 # plot_energies_from_file(who_to_plot=['Total'], path='./graphs/energies_20t_150p.csv')
 #---------------
 
