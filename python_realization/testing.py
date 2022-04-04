@@ -15,17 +15,6 @@ from includes.calculations import N_grid
 
 np.random.seed(42)
 
-f = open('diffusion.csv', 'w')
-fieldnames = ['col1', 'col2']
-writer = csv.DictWriter(f, fieldnames=fieldnames)
-f.write('slkhj' + '\n')
+v = np.array([2, 2, 2])
 
-writer.writeheader()
-writer.writerow(
-    {
-    'col1': 1,
-    'col2': 2
-    }
-)
-
-print(writer.fieldnames)
+print(norm(v))
