@@ -72,10 +72,20 @@ def plot_ready_diffusion(path='../graphs/diffusion_ready/100p_300k_ready.csv'):
     dt_of_steps = df['dt_of_steps']
     all_means = df['all_means']
 
-    plt.scatter(dt_of_steps, all_means)
+    plt.figure(figsize=(24, 16))
+    sp = None
 
+    plt.subplot(1, 2, 1)
+    plt.scatter(dt_of_steps, all_means)
     plt.xlabel('$\Delta t$ of movement, $\sigma\cdot\sqrt{\dfrac{M}{\epsilon}}$', fontsize=14)
     plt.ylabel('$|\Delta r|^2$, $\sigma^2$', fontsize=14)
+
+    x = np.log(dt_of_steps)
+    y = np.log(all_means)
+    plt.subplot(1, 2, 2)
+    plt.scatter(x, y)
+    plt.xlabel('$log(\Delta t$ of movement), $\sigma\cdot\sqrt{\dfrac{M}{\epsilon}}$', fontsize=14)
+    plt.ylabel('$log(|\Delta r|^2)$, $\sigma^2$', fontsize=14)
 
     plt.show()
 

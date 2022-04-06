@@ -144,9 +144,9 @@ My best attempt yet:
 t=300_000 * dt, dt=0.0005, sigma_for_vel=1.5, bins_num=170, averaging_part=0.8, diffusion_step=50, N=100:
 '''
 
-plot_hists_from_file(path = './graphs/hists_best.csv')
-plot_gauss_lines_from_file(path= './graphs/lines_best.csv', train_part=0.75)
-plot_energies_from_file(who_to_plot=['Total'], path='./graphs/energies_best.csv')
+# plot_hists_from_file(path = './graphs/hists_best.csv')
+# plot_gauss_lines_from_file(path= './graphs/lines_best.csv', train_part=0.75)
+# plot_energies_from_file(who_to_plot=['Total'], path='./graphs/energies_best.csv')
 plot_ready_diffusion(path='./graphs/diffusion_ready/100p_300k_ready.csv')
 
 ''' For the last attempt: '''
