@@ -2,7 +2,11 @@ import matplotlib.pyplot as plt
 # import modin.pandas as pd
 import pandas as pd
 import numpy as np
+
 from math import sqrt
+from numpy.linalg import norm
+
+from diffusion_plotter import make_df_get_Dt, calculate_all_means, plot_ready_diffusion
 
 # У меня height - это сразу интеграл по ширине одной штучки ширины width, поскольку height - это вероятность нахождения
 # частички в данном бине ширины width. Для получения плотность вероятности надо делать height / width
@@ -131,9 +135,19 @@ def plot_gauss_lines_from_file(path='./gauss_lines.csv', train_part = 0.7):
 
 ''' For t=150_000 * dt, dt=0.00025, N=100, sigma_vel=1.2, bins=250, second_diffusion try: diffusion_step = 2 dt'''
 
-plot_hists_from_file(draw_gauss=True, path = './graphs/hists_diff2.csv')
-plot_gauss_lines_from_file(path = './graphs/lines_diff2.csv', train_part=0.7)
-plot_energies_from_file(who_to_plot=['Total'], path = './graphs/energies_diff2.csv')
+# plot_hists_from_file(draw_gauss=True, path = './graphs/hists_diff2.csv')
+# plot_gauss_lines_from_file(path = './graphs/lines_diff2.csv', train_part=0.7)
+# plot_energies_from_file(who_to_plot=['Total'], path = './graphs/energies_diff2.csv')
+
+'''
+My best attempt yet: 
+t=300_000 * dt, dt=0.0005, sigma_for_vel=1.5, bins_num=170, averaging_part=0.8, diffusion_step=50, N=100:
+'''
+
+plot_hists_from_file(path = './graphs/hists_best.csv')
+plot_gauss_lines_from_file(path= './graphs/lines_best.csv', train_part=0.75)
+plot_energies_from_file(who_to_plot=['Total'], path='./graphs/energies_best.csv')
+plot_ready_diffusion(path='./graphs/diffusion_ready/100p_300k_ready.csv')
 
 ''' For the last attempt: '''
 

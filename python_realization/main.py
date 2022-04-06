@@ -107,15 +107,7 @@ def main_cycle(spawn_on_grid=True, sigma_for_vel=0.5, verbose=1, bins_num=50, av
     new_hist_plot(heights, edges, T_average, show=False)
     plot_gauss_lines(heights[1:], edges[1:], show=False)
     plot_all_energies(energies, kins, pots, show=False)
-    #----- about diffusion: -----
-    # diffusion_plotting(particles)
+
 # ---------------------------------------- #
-
-main_cycle(spawn_on_grid=True, sigma_for_vel=1.5, bins_num=250, averaging_part=0.6, diffusion_step=10)
-
-# При переходе через границу прибавляем длину ячейки - потому что сосденяя клетка точно такая же как наша и там частица движется точно так же
-
-# Усреднять квадрат модуля вектора пермещения по отерзку времени (каждый отрезок смотрим сколько прошло)
-
-# Берем, например перемещение от 10 до 20 шагов времени, потом от 30 до 40...., потом усредняем величину;
-# И так мы строим зависимость среднего перемещения от размера \Delta t.
+if __name__ == '__main__':
+    main_cycle(spawn_on_grid=True, sigma_for_vel=1.5, bins_num=170, averaging_part=0.8, diffusion_step=50)

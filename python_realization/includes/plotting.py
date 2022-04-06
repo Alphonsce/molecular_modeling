@@ -161,7 +161,8 @@ def write_step_of_diffusion_and_create_writer(diffusion_step, path='diffusion.cs
     f = open('diffusion.csv', 'w')
     writer = csv.DictWriter(f, fieldnames=fieldnames)
     f.write('diffusion_step: ' + str(diffusion_step ) + '\n')
-    f.write('dt: ' + str(dt * diffusion_step) + '\n')
+    f.write('Dt: ' + str(dt * diffusion_step) + '\n')
+    f.write('Dt is for diffusion' + '\n')
     writer.writeheader()
     return writer
 
