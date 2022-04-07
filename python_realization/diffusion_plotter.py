@@ -89,6 +89,9 @@ def plot_ready_diffusion(path='../graphs/diffusion_ready/100p_300k_ready.csv'):
 
     plt.show()
 
+# Нужно просто построить прямую по двум первым точкам в первой прямой и по двумя последним точкам во второй прямой,
+# тогда точка их пересечения - по ох будет ln времени свободного пробега
+
 
 if __name__ == '__main__':
     # df1, Dt1 = make_df_get_Dt(path=path1, N=N)
