@@ -1,10 +1,13 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+import sys
+sys.path.append('./python_realization/includes')
 
 from numpy.linalg import norm
 from math import sqrt
 
+from includes.calculations import calculate_k
 #---- diffusion plotting: ----
 
 N = 100
@@ -67,12 +70,17 @@ def calculate_all_means(max_step, df, Dt, interval_for_step=10):
 
     return all_means, Dt * np.array(steps)
 
-def plot_ready_diffusion(path='../graphs/diffusion_ready/100p_300k_ready.csv'):
+def convert_into_ready_diffusion(all_means, dt_of_steps, out_path='./graphs/diffusion_ready/diff_ready'):
+    pd.DataFrame(
+        {'all_means': all_means, 'dt_of_steps': dt_of_steps}
+    ).to_csv(out_path, index=False)
+
+def plot_ready_diffusion(path='./graphs/diffusion_ready/100p_300k_ready.csv', n_approx=20):
     df = pd.read_csv(path)
     dt_of_steps = df['dt_of_steps']
     all_means = df['all_means']
 
-    plt.figure(figsize=(24, 16))
+    plt.figure(figsize=(12, 6))
     sp = None
 
     plt.subplot(1, 2, 1)
@@ -83,24 +91,24 @@ def plot_ready_diffusion(path='../graphs/diffusion_ready/100p_300k_ready.csv'):
     x = np.log(dt_of_steps)
     y = np.log(all_means)
     plt.subplot(1, 2, 2)
+
+    # Построим прямую по МНК на первых n_approx и прямую на последних n_approx точках
+    x_parab, y_parab = x[:n_approx], y[:n_approx]
+    k_parab, _, b_parab, _ = calculate_k(x_parab, y_parab, through_zero=False)
+    x_lin, y_lin = x[-n_approx:], y[-n_approx:]
+    k_lin, _, b_lin, _ = calculate_k(x_lin, y_lin, through_zero=False)
+    
+    x_parab = x[:len(x) // 2]
+    x_lin = x[int(-len(x) * 0.9):]
+
+    plt.plot(x_parab, k_parab * x_parab + b_parab, color='red')
+    plt.plot(x_lin, k_lin * x_lin + b_lin, color='orange')
+
     plt.scatter(x, y)
     plt.xlabel('$log(\Delta t$ of movement), $\sigma\cdot\sqrt{\dfrac{M}{\epsilon}}$', fontsize=14)
     plt.ylabel('$log(|\Delta r|^2)$, $\sigma^2$', fontsize=14)
 
     plt.show()
 
-# Нужно просто построить прямую по двум первым точкам в первой прямой и по двумя последним точкам во второй прямой,
+# Нужно просто построить прямую по первым точкам в первой прямой и по последним точкам во второй прямой,
 # тогда точка их пересечения - по ох будет ln времени свободного пробега
-
-
-if __name__ == '__main__':
-    # df1, Dt1 = make_df_get_Dt(path=path1, N=N)
-    # df2, Dt2 = make_df_get_Dt(path=path2, N=N)
-
-    df, Dt = make_df_get_Dt(path=path_best, N=N)
-    all_means, dt_of_steps = calculate_all_means(max_step=22500, df=df, Dt=Dt, interval_for_step=225)
-
-
-    plt.scatter(dt_of_steps, all_means)
-
-    plt.show()

@@ -2,43 +2,17 @@ import matplotlib.pyplot as plt
 # import modin.pandas as pd
 import pandas as pd
 import numpy as np
+import sys
+sys.path.append('./python_realization/includes')
 
 from math import sqrt
 from numpy.linalg import norm
 
 from diffusion_plotter import make_df_get_Dt, calculate_all_means, plot_ready_diffusion
+from includes.calculations import calculate_k
 
 # У меня height - это сразу интеграл по ширине одной штучки ширины width, поскольку height - это вероятность нахождения
 # частички в данном бине ширины width. Для получения плотность вероятности надо делать height / width
-
-def calculate_k(x, y, through_zero=False):
-    '''Вычисление коэффициентов для аппроксимации зависимостью y = kx + b'''
-    n = len(x)
-    m_x = x.mean()
-    m_y = y.mean()
-    m_xx = (x * x). mean()
-    m_yy = (y * y).mean()
-    m_xy = (x * y).mean()
-    m_x_m_x = x.mean() * x.mean()
-    m_y_m_y = y.mean() * y.mean()
-
-    k = 0
-    s_k = 0
-    b = 0
-    s_b = 0
-
-    if through_zero:
-        k = m_xy / m_xx
-        s_k = (1 / sqrt(n)) * sqrt((m_yy / m_xx) - k ** 2)
-        return [k, s_k]
-
-    else:
-        k = (m_xy - m_x * m_y) / (m_xx - m_x_m_x)
-        b = m_y - k * m_x
-
-        s_k = (1 / sqrt(n)) * sqrt((m_yy - m_y_m_y) / (m_xx - m_x_m_x) - k ** 2)
-        s_b = s_k * sqrt(m_xx - m_x_m_x)
-        return [k, s_k, b, s_b]
 
 def plot_energies_from_file(path='./energies.csv', who_to_plot=['Total']):
     df = pd.read_csv(path)
