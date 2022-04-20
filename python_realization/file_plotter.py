@@ -9,10 +9,23 @@ from math import sqrt
 from numpy.linalg import norm
 
 from diffusion_plotter import make_df_get_Dt, calculate_all_means, plot_ready_diffusion
+from diffusion_plotter import convert_into_ready_diffusion, make_df_get_Dt
+
 from includes.calculations import calculate_k
 
 # У меня height - это сразу интеграл по ширине одной штучки ширины width, поскольку height - это вероятность нахождения
 # частички в данном бине ширины width. Для получения плотность вероятности надо делать height / width
+
+def make_ready_csv_diff(
+    input_path='./graphs_final/diffusion.csv',
+    N=100, max_step=2380, interval_for_step=16,
+    out_path='./graphs_final/diffusion_ready/t_0_68_ready.csv'):
+    '''
+    Параметры по умолчанию стоят для файлов финального формата
+    '''
+    df, Dt = make_df_get_Dt(path=input_path, N=N)
+    all_means, dt_of_steps = calculate_all_means(max_step=max_step, df=df, Dt=Dt, interval_for_step=interval_for_step)
+    convert_into_ready_diffusion(dt_of_steps=dt_of_steps, all_means=all_means, out_path=out_path)
 
 def plot_energies_from_file(path='./energies.csv', who_to_plot=['Total']):
     df = pd.read_csv(path)
@@ -113,15 +126,31 @@ def plot_gauss_lines_from_file(path='./gauss_lines.csv', train_part = 0.7):
 # plot_gauss_lines_from_file(path = './graphs/lines_diff2.csv', train_part=0.7)
 # plot_energies_from_file(who_to_plot=['Total'], path = './graphs/energies_diff2.csv')
 
+'''------------------------------------------------------------------------------------------------------------'''
+'''----Снизу я хочу сделать замеры для температур: 0.01; 0.05; 0.1; 0.25; 0.5, 1.0; 1.5; 2.0 стартовых сигма с одинаковыми параметрами----'''
+'''-----------------------------------------------------------------------------------------------------------'''
+
+
 '''
-My best attempt yet: 
+T = 2.3: 
 t=300_000 * dt, dt=0.0005, sigma_for_vel=1.5, bins_num=170, averaging_part=0.8, diffusion_step=50, N=100:
 '''
 
-# plot_hists_from_file(path = './graphs/hists_best.csv')
-# plot_gauss_lines_from_file(path= './graphs/lines_best.csv', train_part=0.75)
-# plot_energies_from_file(who_to_plot=['Total'], path='./graphs/energies_best.csv')
-plot_ready_diffusion(path='./graphs/diffusion_ready/100p_300k_ready.csv')
+# plot_hists_from_file(path = './graphs_final/hists_2_3.csv')
+# plot_gauss_lines_from_file(path= './graphs_final/lines_2_3.csv', train_part=0.75)
+# plot_energies_from_file(who_to_plot=['Total'], path='./graphs_final/energies_2_3.csv')
+# plot_ready_diffusion(path='./graphs_final/diffusion_ready/t_2_3_ready.csv')
+
+'''
+T = 0.68: 
+t=300_000 * dt, dt=0.0005, sigma_for_vel=0.01, bins_num=170, averaging_part=0.8, diffusion_step=50, N=100:
+'''
+
+plot_hists_from_file(path = './graphs_final/hists_0_68.csv')
+plot_gauss_lines_from_file(path= './graphs_final/lines_0_68.csv', train_part=0.75)
+plot_energies_from_file(who_to_plot=['Total'], path='./graphs_final/energies_0_68.csv')
+plot_ready_diffusion(path='./graphs_final/diffusion_ready/t_0_68_ready.csv')
+
 
 ''' For the last attempt: '''
 
