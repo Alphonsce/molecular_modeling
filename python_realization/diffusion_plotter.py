@@ -2,6 +2,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import sys
+from scipy.misc import derivative
+
+from torch import TupleType
 sys.path.append('./python_realization/includes')
 
 from numpy.linalg import norm
@@ -70,7 +73,25 @@ def calculate_all_means(max_step, df, Dt, interval_for_step=10):
 
     return all_means, Dt * np.array(steps)
 
-def convert_into_ready_diffusion(all_means, dt_of_steps, out_path='./graphs/diffusion_ready/diff_ready'):
+def get_point_of_transition(xs, ys, tol=0.01):
+    '''
+    returns two points: 1) where derivitive becomes almost constant, going from beggining, 2) where it changes, when going from the end
+    '''
+    deriv = (max(ys) - min(ys)) / (max(xs) - min(xs))
+    start_flag = True
+    x0, y0 = xs[0], ys[0]
+
+    for x1, y1 in zip(xs[1:], ys[1:]):
+        if start_flag:
+            deriv = (y1 - y0) / (x1 - x0)
+            start_flag = False
+
+        deriv = (y1 - y0) / (x1 - x0)
+        print(f'deriv: {deriv}, (x1 y1): {x1, y1}')
+        x0, y0 = x1, y1
+
+
+def convert_into_ready_diffusion(all_means, dt_of_steps, out_path='graphs/diffusion_ready/100p_300k_ready.csv'):
     pd.DataFrame(
         {'all_means': all_means, 'dt_of_steps': dt_of_steps}
     ).to_csv(out_path, index=False)
@@ -83,11 +104,22 @@ def plot_ready_diffusion(path='./graphs/diffusion_ready/100p_300k_ready.csv', n_
     plt.figure(figsize=(12, 6))
     sp = None
 
+    # Обычный subplot:
+    # построим прямую по последним n_approx точкам:
+    k_basic, _, b_basic, _ = calculate_k(dt_of_steps[-130:], all_means[-130:])
+    x = dt_of_steps
+
     plt.subplot(1, 2, 1)
     plt.scatter(dt_of_steps, all_means)
+    plt.plot(x, k_basic * x + b_basic, color='red', label=f'k = {round(k_basic, 2)}, D = {round(k_basic / 6, 2)}')
+    print(k_basic)
+    plt.legend(loc='best')
+
     plt.xlabel('$\Delta t$ of movement, $\sigma\cdot\sqrt{\dfrac{M}{\epsilon}}$', fontsize=14)
     plt.ylabel('$|\Delta r|^2$, $\sigma^2$', fontsize=14)
 
+
+    # Логарифмический subplpt:
     x = np.log(dt_of_steps)
     y = np.log(all_means)
     plt.subplot(1, 2, 2)
@@ -103,8 +135,8 @@ def plot_ready_diffusion(path='./graphs/diffusion_ready/100p_300k_ready.csv', n_
 
     plt.plot(x_parab, k_parab * x_parab + b_parab, color='red')
     plt.plot(x_lin, k_lin * x_lin + b_lin, color='orange')
-
     plt.scatter(x, y)
+
     plt.xlabel('$log(\Delta t$ of movement), $\sigma\cdot\sqrt{\dfrac{M}{\epsilon}}$', fontsize=14)
     plt.ylabel('$log(|\Delta r|^2)$, $\sigma^2$', fontsize=14)
 
@@ -112,3 +144,14 @@ def plot_ready_diffusion(path='./graphs/diffusion_ready/100p_300k_ready.csv', n_
 
 # Нужно просто построить прямую по первым точкам в первой прямой и по последним точкам во второй прямой,
 # тогда точка их пересечения - по ох будет ln времени свободного пробега
+
+if __name__ == '__main__':
+    df = pd.read_csv('./graphs/diffusion_ready/100p_300k_ready.csv')
+    xs, ys = df['dt_of_steps'], df['all_means']
+
+    get_point_of_transition(xs, ys)
+
+
+# Коэффициент наклона в обычных координатах для линии делим на 6 - получаем коэффициент дифффузии, потом из среднекв скорости по температуре
+# получаем среднюю скорость - тогда получаем длину свободного пробега из: D = (1/3) <V>Л, тогда можем получить наше значение для эффективного сечения из определения:
+# Л = 1 / (sigma * n)
