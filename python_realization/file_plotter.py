@@ -127,7 +127,7 @@ def plot_gauss_lines_from_file(path='./gauss_lines.csv', train_part = 0.7):
 # plot_energies_from_file(who_to_plot=['Total'], path = './graphs/energies_diff2.csv')
 
 '''------------------------------------------------------------------------------------------------------------'''
-'''----Снизу я хочу сделать замеры для температур: 0.01; 0.05; 0.1; 0.25; 0.5, 1.0; 1.5; 2.0 стартовых сигма с одинаковыми параметрами----'''
+'''----Снизу я хочу сделать замеры для разных температур стартовых сигма с одинаковыми параметрами----'''
 '''-----------------------------------------------------------------------------------------------------------'''
 
 
@@ -141,19 +141,30 @@ t=300_000 * dt, dt=0.0005, sigma_for_vel=1.5, bins_num=170, averaging_part=0.8, 
 # plot_energies_from_file(who_to_plot=['Total'], path='./graphs_final/energies_2_3.csv')
 # plot_ready_diffusion(path='./graphs_final/diffusion_ready/t_2_3_ready.csv')
 
+
+'''
+T = 1.0: 
+t=300_000 * dt, dt=0.0005, sigma_for_vel=1.0, bins_num=170, averaging_part=0.8, diffusion_step=50, N=100:
+'''
+
+# plot_hists_from_file(path = './graphs_final/histograms_t_1.csv')
+# plot_gauss_lines_from_file(path= './graphs_final/gauss_lines_t_1.csv', train_part=0.75)
+# plot_energies_from_file(who_to_plot=['Total'], path='./graphs_final/energies_t_1.csv')
+# plot_ready_diffusion(path='./graphs_final/diffusion_ready/t_1_ready.csv')
+
+
 '''
 T = 0.68: 
 t=300_000 * dt, dt=0.0005, sigma_for_vel=0.01, bins_num=170, averaging_part=0.8, diffusion_step=50, N=100:
 '''
 
-plot_hists_from_file(path = './graphs_final/hists_0_68.csv')
-plot_gauss_lines_from_file(path= './graphs_final/lines_0_68.csv', train_part=0.75)
-plot_energies_from_file(who_to_plot=['Total'], path='./graphs_final/energies_0_68.csv')
-plot_ready_diffusion(path='./graphs_final/diffusion_ready/t_0_68_ready.csv')
-
+# plot_hists_from_file(path = './graphs_final/hists_0_68.csv')
+# plot_gauss_lines_from_file(path= './graphs_final/lines_0_68.csv', train_part=0.75)
+# plot_energies_from_file(who_to_plot=['Total'], path='./graphs_final/energies_0_68.csv')
+# plot_ready_diffusion(path='./graphs_final/diffusion_ready/t_0_68_ready.csv')
 
 ''' For the last attempt: '''
 
-# plot_hists_from_file()
-# plot_gauss_lines_from_file()
-# plot_energies_from_file(who_to_plot=['Total'])
+plot_hists_from_file()
+plot_gauss_lines_from_file()
+plot_energies_from_file(who_to_plot=['Total'])
