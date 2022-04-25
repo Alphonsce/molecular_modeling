@@ -97,6 +97,7 @@ def convert_into_ready_diffusion(all_means, dt_of_steps, out_path='graphs/diffus
     ).to_csv(out_path, index=False)
 
 def plot_ready_diffusion(path='./graphs/diffusion_ready/100p_300k_ready.csv', n_approx=20):
+    '''Возвращает значение коэффициента диффузии'''
     df = pd.read_csv(path)
     dt_of_steps = df['dt_of_steps']
     all_means = df['all_means']
@@ -112,12 +113,11 @@ def plot_ready_diffusion(path='./graphs/diffusion_ready/100p_300k_ready.csv', n_
     plt.subplot(1, 2, 1)
     plt.scatter(dt_of_steps, all_means)
     plt.plot(x, k_basic * x + b_basic, color='red', label=f'k = {round(k_basic, 2)}, D = {round(k_basic / 6, 2)}')
-    print(k_basic)
+    # print(k_basic)
     plt.legend(loc='best')
 
     plt.xlabel('$\Delta t$ of movement, $\sigma\cdot\sqrt{\dfrac{M}{\epsilon}}$', fontsize=14)
     plt.ylabel('$|\Delta r|^2$, $\sigma^2$', fontsize=14)
-
 
     # Логарифмический subplpt:
     x = np.log(dt_of_steps)
@@ -141,6 +141,8 @@ def plot_ready_diffusion(path='./graphs/diffusion_ready/100p_300k_ready.csv', n_
     plt.ylabel('$log(|\Delta r|^2)$, $\sigma^2$', fontsize=14)
 
     plt.show()
+
+    return round(k_basic / 6, 3)
 
 # Нужно просто построить прямую по первым точкам в первой прямой и по последним точкам во второй прямой,
 # тогда точка их пересечения - по ох будет ln времени свободного пробега
