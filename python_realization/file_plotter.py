@@ -115,12 +115,17 @@ def plot_gauss_lines_from_file(path='./gauss_lines.csv', train_part = 0.7):
 
 def calculate_sigma(kT, D, rho=1 / 27):
     avg_V = np.sqrt(8 * (kT / np.pi))
-    lamb = 6 * D / avg_V
-    exp_sigma = 1 / (sqrt(2) * lamb * rho)
-    theor_sigma = 1.34 * pow(kT, -1 / 12)
+    lamb = 3 * D / avg_V
+
+    exp_section = 1 / (sqrt(2) * lamb * rho)      # "сечение" частицы, определенное через коэф диффузии
+    exp_d = sqrt((4 / np.pi) * exp_section)
+
+    theor_d = 1.34 * pow(kT, -1 / 12)       # "диаметр" частицы, определенный через теоритическую зависимость от температуры
+    theor_section = np.pi * theor_d ** 2 / 4
 
     print(
-        f'lambda: {lamb}; experimental sigma: {exp_sigma}, theor sigma: {theor_sigma}'
+        f'lambda = {round(lamb, 3)}; D = {D}; kT = {kT} \n',
+        f'exp_section = {round(exp_section, 3)}; exp_d = {round(exp_d, 3)}; theor_section = {round(theor_section, 3)}; theor_d = {round(theor_d, 3)}'
     )
     return
 
@@ -160,12 +165,11 @@ T = 2.3; rho = 1 / 27:
 t=300_000 * dt, dt=0.0005, sigma_for_vel=1.5, bins_num=170, averaging_part=0.8, diffusion_step=50, N=100:
 '''
 
-# kT_def = plot_hists_from_file(path = './graphs_final/hists_2_3.csv')
-# kT_gauss = plot_gauss_lines_from_file(path= './graphs_final/lines_2_3.csv', train_part=0.75)
-# plot_energies_from_file(who_to_plot=['Total'], path='./graphs_final/energies_2_3.csv')
-# D = plot_ready_diffusion(path='./graphs_final/diffusion_ready/t_2_3_ready.csv')
-# print(kT_def, kT_gauss, D)
-# calculate_sigma(kT=kT_def, D=D)
+kT_def = plot_hists_from_file(path = './graphs_final/hists_2_3.csv')
+kT_gauss = plot_gauss_lines_from_file(path= './graphs_final/lines_2_3.csv', train_part=0.75)
+plot_energies_from_file(who_to_plot=['Total'], path='./graphs_final/energies_2_3.csv')
+D = plot_ready_diffusion(path='./graphs_final/diffusion_ready/t_2_3_ready.csv')
+calculate_sigma(kT=kT_def, D=D)
 
 '''
 T = 1.0; rho = 1 / 27: 
@@ -176,7 +180,6 @@ t=300_000 * dt, dt=0.0005, sigma_for_vel=1.0, bins_num=170, averaging_part=0.8, 
 # kT_gauss = plot_gauss_lines_from_file(path= './graphs_final/gauss_lines_t_1.csv', train_part=0.75)
 # plot_energies_from_file(who_to_plot=['Total'], path='./graphs_final/energies_t_1.csv')
 # D = plot_ready_diffusion(path='./graphs_final/diffusion_ready/t_1_ready.csv')
-# print(kT_def, kT_gauss, D)
 # calculate_sigma(kT=kT_def, D=D)
 
 '''
@@ -188,7 +191,6 @@ t=300_000 * dt, dt=0.0005, sigma_for_vel=0.01, bins_num=170, averaging_part=0.8,
 # kT_gauss = plot_gauss_lines_from_file(path= './graphs_final/lines_0_68.csv', train_part=0.75)
 # plot_energies_from_file(who_to_plot=['Total'], path='./graphs_final/energies_0_68.csv')
 # D = plot_ready_diffusion(path='./graphs_final/diffusion_ready/t_0_68_ready.csv')
-# print(kT_def, kT_gauss, D)
 # calculate_sigma(kT=kT_def, D=D)
 
 ''' For the last attempt: '''
