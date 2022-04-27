@@ -159,17 +159,28 @@ def calculate_sigma(kT, D, rho=1 / 27):
 '''----Снизу я хочу сделать замеры для разных температур стартовых сигма с одинаковыми параметрами----'''
 '''-----------------------------------------------------------------------------------------------------------'''
 
+'''
+T = 3.2; rho = 1 / 27: 
+t=300_000 * dt, dt=0.0005, sigma_for_vel=1.75, bins_num=170, averaging_part=0.8, diffusion_step=50, N=100:
+'''
+
+# kT_def = plot_hists_from_file(path = './graphs_final/histograms3_2.csv')
+# kT_gauss = plot_gauss_lines_from_file(path= './graphs_final/lines3_2.csv', train_part=0.75)
+# plot_energies_from_file(who_to_plot=['Total'], path='./graphs_final/energies3_2.csv')
+# D = plot_ready_diffusion(path='./graphs_final/diffusion_ready/t_3_2_ready.csv')
+# calculate_sigma(kT=kT_def, D=D)
+
 
 '''
 T = 2.3; rho = 1 / 27: 
 t=300_000 * dt, dt=0.0005, sigma_for_vel=1.5, bins_num=170, averaging_part=0.8, diffusion_step=50, N=100:
 '''
 
-kT_def = plot_hists_from_file(path = './graphs_final/hists_2_3.csv')
-kT_gauss = plot_gauss_lines_from_file(path= './graphs_final/lines_2_3.csv', train_part=0.75)
-plot_energies_from_file(who_to_plot=['Total'], path='./graphs_final/energies_2_3.csv')
-D = plot_ready_diffusion(path='./graphs_final/diffusion_ready/t_2_3_ready.csv')
-calculate_sigma(kT=kT_def, D=D)
+# kT_def = plot_hists_from_file(path = './graphs_final/hists_2_3.csv')
+# kT_gauss = plot_gauss_lines_from_file(path= './graphs_final/lines_2_3.csv', train_part=0.75)
+# plot_energies_from_file(who_to_plot=['Total'], path='./graphs_final/energies_2_3.csv')
+# D = plot_ready_diffusion(path='./graphs_final/diffusion_ready/t_2_3_ready.csv')
+# calculate_sigma(kT=kT_def, D=D)
 
 '''
 T = 1.0; rho = 1 / 27: 
