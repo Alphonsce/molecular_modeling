@@ -110,4 +110,4 @@ def main_cycle(spawn_on_grid=True, sigma_for_vel=0.5, verbose=1, bins_num=50, av
 
 # ---------------------------------------- #
 if __name__ == '__main__':
-    main_cycle(spawn_on_grid=True, sigma_for_vel=1.75, bins_num=170, averaging_part=0.8, diffusion_step=50)
+    main_cycle(spawn_on_grid=True, sigma_for_vel=2.0, bins_num=170, averaging_part=0.8, diffusion_step=50)
