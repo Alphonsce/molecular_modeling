@@ -194,6 +194,17 @@ t=300_000 * dt, dt=0.0005, sigma_for_vel=1.5, bins_num=170, averaging_part=0.8, 
 # calculate_sigma(kT=kT_def, D=D)
 
 '''
+T = 1.65; rho = 1 / 27: 
+t=300_000 * dt, dt=0.0005, sigma_for_vel=1.25, bins_num=170, averaging_part=0.8, diffusion_step=50, N=100:
+'''
+
+# kT_def = plot_hists_from_file(path = './graphs_final/histograms_t_1_6.csv')
+# kT_gauss = plot_gauss_lines_from_file(path= './graphs_final/lines_t_1_6.csv', train_part=0.75)
+# plot_energies_from_file(who_to_plot=['Total'], path='./graphs_final/energies_t_1_6.csv')
+# D = plot_ready_diffusion(path='./graphs_final/diffusion_ready/t_1_6_ready.csv')
+# calculate_sigma(kT=kT_def, D=D)
+
+'''
 T = 1.0; rho = 1 / 27: 
 t=300_000 * dt, dt=0.0005, sigma_for_vel=1.0, bins_num=170, averaging_part=0.8, diffusion_step=50, N=100:
 '''
