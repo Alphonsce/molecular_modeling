@@ -19,11 +19,12 @@ np.random.seed(42)
 # Because temperature is an average kinetic energy of CHAOTIC movement, I'll need to substract
 # the speed of center of mass from the speed of every atom to calculate the temperature
 
-def main_cycle(spawn_on_grid=True, sigma_for_vel=0.5, verbose=1, bins_num=50, averaging_part=0.8, diffusion_step=1, device='CPU'):
+def main_cycle(spawn_on_grid=True, sigma_for_vel=0.5, verbose=1, bins_num=50, averaging_part=0.8, diffusion_step=1, device='CPU', rho_coef=2):
     '''
     main cycle, all the movements and calculations will happen here
     verbose: % of program finished to print
     diffusion_step: once every diffusion_step all coordinates will be written for diffusion plotting
+    rho = 1 / rho_coef ** 3
     '''
     particles = initialize_system(on_grid=spawn_on_grid, sigma_for_velocity=sigma_for_vel, device=device)
     total_pot = 0
@@ -110,4 +111,4 @@ def main_cycle(spawn_on_grid=True, sigma_for_vel=0.5, verbose=1, bins_num=50, av
 
 # ---------------------------------------- #
 if __name__ == '__main__':
-    main_cycle(spawn_on_grid=True, sigma_for_vel=1.25, bins_num=170, averaging_part=0.8, diffusion_step=50)
+    main_cycle(spawn_on_grid=True, sigma_for_vel=1.0, bins_num=170, averaging_part=0.8, diffusion_step=50)

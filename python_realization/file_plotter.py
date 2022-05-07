@@ -129,35 +129,20 @@ def calculate_sigma(kT, D, rho=1 / 27):
     )
     return
 
-''' For t=20, dt=0.0005, N=150, sigma_v = 5: '''
-
-# plot_hists_from_file(path='./graphs/histograms_20t_150p.csv')
-# plot_gauss_lines_from_file(path='./graphs/lines_20t_150p.csv')
-# plot_energies_from_file(who_to_plot=['Total'], path='./graphs/energies_20t_150p.csv')
-#---------------
-
-''' For t=50, dt=0.0005, N=100, sigma_v = 1.5: '''
-
-# plot_hists_from_file(draw_gauss=True, path = './graphs/histograms_100k_steps_100particles_dt_0_0005.csv')
-# plot_gauss_lines_from_file(path = './graphs/lines_100k_steps_100particles_dt_0_0005.csv', train_part=0.6)
-# plot_energies_from_file(who_to_plot=['Total'], path = './graphs/energies_100k_steps_100particles_dt_0_0005.csv')
-#---------------
-
-''' For t=50, dt=0.0005, N=100, sigma_v=1.5, bins=200, first diffusion try: diffusion_step = 10 dt'''
-
-# plot_hists_from_file(draw_gauss=True, path = './graphs/histograms_1diff.csv')
-# plot_gauss_lines_from_file(path = './graphs/lines_1diff.csv', train_part=0.7)
-# plot_energies_from_file(who_to_plot=['Total'], path = './graphs/energies_1diff.csv')
-
-''' For t=150_000 * dt, dt=0.00025, N=100, sigma_vel=1.2, bins=250, second_diffusion try: diffusion_step = 2 dt'''
-
-# plot_hists_from_file(draw_gauss=True, path = './graphs/hists_diff2.csv')
-# plot_gauss_lines_from_file(path = './graphs/lines_diff2.csv', train_part=0.7)
-# plot_energies_from_file(who_to_plot=['Total'], path = './graphs/energies_diff2.csv')
-
 '''------------------------------------------------------------------------------------------------------------'''
-'''----Снизу я хочу сделать замеры для разных температур стартовых сигма с одинаковыми параметрами----'''
+''' ---- Плотность 1 / 27: ----'''
 '''-----------------------------------------------------------------------------------------------------------'''
+
+'''
+T = 4.7; rho = 1 / 27: 
+t=300_000 * dt, dt=0.0005, sigma_for_vel=2.25, bins_num=170, averaging_part=0.8, diffusion_step=50, N=100:
+'''
+
+# kT_def = plot_hists_from_file(path = './graphs_final/histograms_t_4_7.csv')
+# kT_gauss = plot_gauss_lines_from_file(path= './graphs_final/lines_t_4_7.csv', train_part=0.75)
+# plot_energies_from_file(who_to_plot=['Total'], path='./graphs_final/energies_t_4_7.csv')
+# D = plot_ready_diffusion(path='./graphs_final/diffusion_ready/t_4_7_ready.csv')
+# calculate_sigma(kT=kT_def, D=D)
 
 '''
 T = 4.0; rho = 1 / 27: 
@@ -225,6 +210,12 @@ t=300_000 * dt, dt=0.0005, sigma_for_vel=0.01, bins_num=170, averaging_part=0.8,
 # plot_energies_from_file(who_to_plot=['Total'], path='./graphs_final/energies_0_68.csv')
 # D = plot_ready_diffusion(path='./graphs_final/diffusion_ready/t_0_68_ready.csv')
 # calculate_sigma(kT=kT_def, D=D)
+
+'''------------------------------------------------------------------------------------------------------------'''
+''' ---- Плотность 1 / 4: ----'''
+'''-----------------------------------------------------------------------------------------------------------'''
+
+
 
 ''' For the last attempt: '''
 
