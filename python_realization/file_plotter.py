@@ -134,6 +134,17 @@ def calculate_sigma(kT, D, rho=1 / 27):
 '''-----------------------------------------------------------------------------------------------------------'''
 
 '''
+T = 6.2; rho = 1 / 27: 
+t=300_000 * dt, dt=0.0005, sigma_for_vel=2.5, bins_num=170, averaging_part=0.8, diffusion_step=50, N=100:
+'''
+
+# kT_def = plot_hists_from_file(path = './graphs_rho_1_27/histograms_6_2.csv')
+# kT_gauss = plot_gauss_lines_from_file(path= './graphs_rho_1_27/lines_6_2.csv', train_part=0.75)
+# plot_energies_from_file(who_to_plot=['Total'], path='./graphs_rho_1_27/energies_6_2.csv')
+# D = plot_ready_diffusion(path='./graphs_rho_1_27/diffusion_ready/t_6_2_ready.csv')
+# calculate_sigma(kT=kT_def, D=D)
+
+'''
 T = 4.7; rho = 1 / 27: 
 t=300_000 * dt, dt=0.0005, sigma_for_vel=2.25, bins_num=170, averaging_part=0.8, diffusion_step=50, N=100:
 '''
@@ -215,7 +226,27 @@ t=300_000 * dt, dt=0.0005, sigma_for_vel=0.01, bins_num=170, averaging_part=0.8,
 ''' ---- Плотность 1 / 4: ----'''
 '''-----------------------------------------------------------------------------------------------------------'''
 
+'''
+T = 1.5; rho = 1 / 4: 
+t=300_000 * dt, dt=0.0005, sigma_for_vel=1.0, bins_num=170, averaging_part=0.8, diffusion_step=50, N=100:
+'''
 
+# kT_def = plot_hists_from_file(path = './graphs_rho_1_4/histograms_1_5.csv')
+# kT_gauss = plot_gauss_lines_from_file(path= './graphs_rho_1_4/lines_1_5.csv', train_part=0.75)
+# plot_energies_from_file(who_to_plot=['Total'], path='./graphs_rho_1_4/energies_1_5.csv')
+# D = plot_ready_diffusion(path='./graphs_rho_1_4/diffusion_ready/t_1_5_ready.csv')
+# calculate_sigma(kT=kT_def, D=D)
+
+'''
+T = 2.7; rho = 1 / 27: 
+t=300_000 * dt, dt=0.0005, sigma_for_vel=1.5, bins_num=170, averaging_part=0.8, diffusion_step=50, N=100:
+'''
+
+# kT_def = plot_hists_from_file(path = './graphs_rho_1_4/histograms_2_7.csv')
+# kT_gauss = plot_gauss_lines_from_file(path= './graphs_rho_1_4/lines_2_7.csv', train_part=0.75)
+# plot_energies_from_file(who_to_plot=['Total'], path='./graphs_rho_1_4/energies_2_7.csv')
+# D = plot_ready_diffusion(path='./graphs_rho_1_4/diffusion_ready/t_2_7_ready.csv')
+# calculate_sigma(kT=kT_def, D=D)
 
 ''' For the last attempt: '''
 

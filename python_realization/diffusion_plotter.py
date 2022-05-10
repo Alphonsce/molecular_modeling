@@ -96,7 +96,7 @@ def convert_into_ready_diffusion(all_means, dt_of_steps, out_path='graphs/diffus
         {'all_means': all_means, 'dt_of_steps': dt_of_steps}
     ).to_csv(out_path, index=False)
 
-def plot_ready_diffusion(path='./graphs/diffusion_ready/100p_300k_ready.csv', n_approx=20):
+def plot_ready_diffusion(path='./graphs/diffusion_ready/100p_300k_ready.csv', n_approx=30):
     '''Возвращает значение коэффициента диффузии'''
     df = pd.read_csv(path)
     dt_of_steps = df['dt_of_steps']
@@ -124,10 +124,10 @@ def plot_ready_diffusion(path='./graphs/diffusion_ready/100p_300k_ready.csv', n_
     y = np.log(all_means)
     plt.subplot(1, 2, 2)
 
-    # Построим прямую по МНК на первых n_approx и прямую на последних n_approx точках
+    # Построим прямую по МНК на первых n_approx и прямую на последних 2 * n_approx точках
     x_parab, y_parab = x[:n_approx], y[:n_approx]
     k_parab, _, b_parab, _ = calculate_k(x_parab, y_parab, through_zero=False)
-    x_lin, y_lin = x[-n_approx:], y[-n_approx:]
+    x_lin, y_lin = x[-4 * n_approx:], y[-4 * n_approx:]
     k_lin, _, b_lin, _ = calculate_k(x_lin, y_lin, through_zero=False)
     
     x_parab = x[:len(x) // 2]
