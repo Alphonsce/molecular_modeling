@@ -227,6 +227,28 @@ t=300_000 * dt, dt=0.0005, sigma_for_vel=0.01, bins_num=170, averaging_part=0.8,
 '''-----------------------------------------------------------------------------------------------------------'''
 
 '''
+T = 4.6; rho = 1 / 4: 
+t=300_000 * dt, dt=0.0005, sigma_for_vel=1.5, bins_num=170, averaging_part=0.8, diffusion_step=50, N=100:
+'''
+
+# kT_def = plot_hists_from_file(path = './graphs_rho_1_4/histograms_4_6.csv')
+# kT_gauss = plot_gauss_lines_from_file(path= './graphs_rho_1_4/lines_4_6.csv', train_part=0.75)
+# plot_energies_from_file(who_to_plot=['Total'], path='./graphs_rho_1_4/energies_4_6.csv')
+# D = plot_ready_diffusion(path='./graphs_rho_1_4/diffusion_ready/t_4_6_ready.csv')
+# calculate_sigma(kT=kT_def, D=D, rho=0.25)
+
+'''
+T = 2.7; rho = 1 / 4: 
+t=300_000 * dt, dt=0.0005, sigma_for_vel=1.5, bins_num=170, averaging_part=0.8, diffusion_step=50, N=100:
+'''
+
+# kT_def = plot_hists_from_file(path = './graphs_rho_1_4/histograms_2_7.csv')
+# kT_gauss = plot_gauss_lines_from_file(path= './graphs_rho_1_4/lines_2_7.csv', train_part=0.75)
+# plot_energies_from_file(who_to_plot=['Total'], path='./graphs_rho_1_4/energies_2_7.csv')
+# D = plot_ready_diffusion(path='./graphs_rho_1_4/diffusion_ready/t_2_7_ready.csv')
+# calculate_sigma(kT=kT_def, D=D, rho=0.25)
+
+'''
 T = 1.5; rho = 1 / 4: 
 t=300_000 * dt, dt=0.0005, sigma_for_vel=1.0, bins_num=170, averaging_part=0.8, diffusion_step=50, N=100:
 '''
@@ -235,18 +257,7 @@ t=300_000 * dt, dt=0.0005, sigma_for_vel=1.0, bins_num=170, averaging_part=0.8, 
 # kT_gauss = plot_gauss_lines_from_file(path= './graphs_rho_1_4/lines_1_5.csv', train_part=0.75)
 # plot_energies_from_file(who_to_plot=['Total'], path='./graphs_rho_1_4/energies_1_5.csv')
 # D = plot_ready_diffusion(path='./graphs_rho_1_4/diffusion_ready/t_1_5_ready.csv')
-# calculate_sigma(kT=kT_def, D=D)
-
-'''
-T = 2.7; rho = 1 / 27: 
-t=300_000 * dt, dt=0.0005, sigma_for_vel=1.5, bins_num=170, averaging_part=0.8, diffusion_step=50, N=100:
-'''
-
-# kT_def = plot_hists_from_file(path = './graphs_rho_1_4/histograms_2_7.csv')
-# kT_gauss = plot_gauss_lines_from_file(path= './graphs_rho_1_4/lines_2_7.csv', train_part=0.75)
-# plot_energies_from_file(who_to_plot=['Total'], path='./graphs_rho_1_4/energies_2_7.csv')
-# D = plot_ready_diffusion(path='./graphs_rho_1_4/diffusion_ready/t_2_7_ready.csv')
-# calculate_sigma(kT=kT_def, D=D)
+# calculate_sigma(kT=kT_def, D=D, rho=0.25)
 
 ''' For the last attempt: '''
 
@@ -254,5 +265,9 @@ t=300_000 * dt, dt=0.0005, sigma_for_vel=1.5, bins_num=170, averaging_part=0.8, 
 # plot_gauss_lines_from_file()
 # plot_energies_from_file(who_to_plot=['Total'])
 
-
 # надо получить D(T) - потом уже тогда получим (sigma_exp / sigma_theor)[T]
+
+# make_ready_csv_diff(
+#     input_path='./graphs_rho_1_4/diffusion_4_6.csv',
+#     N=100, max_step=2380, interval_for_step=16,
+#     out_path='./graphs_rho_1_4/diffusion_ready/t_4_6_ready.csv')

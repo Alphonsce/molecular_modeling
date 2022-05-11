@@ -125,13 +125,13 @@ def plot_ready_diffusion(path='./graphs/diffusion_ready/100p_300k_ready.csv', n_
     plt.subplot(1, 2, 2)
 
     # Построим прямую по МНК на первых n_approx и прямую на последних 2 * n_approx точках
-    x_parab, y_parab = x[:n_approx], y[:n_approx]
+    x_parab, y_parab = x[:n_approx // 2], y[:n_approx // 2]
     k_parab, _, b_parab, _ = calculate_k(x_parab, y_parab, through_zero=False)
     x_lin, y_lin = x[-4 * n_approx:], y[-4 * n_approx:]
     k_lin, _, b_lin, _ = calculate_k(x_lin, y_lin, through_zero=False)
     
     x_parab = x[:len(x) // 2]
-    x_lin = x[int(-len(x) * 0.9):]
+    x_lin = x[int(-len(x) * 0.92):]
 
     plt.plot(x_parab, k_parab * x_parab + b_parab, color='red')
     plt.plot(x_lin, k_lin * x_lin + b_lin, color='orange')
