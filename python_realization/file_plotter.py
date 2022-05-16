@@ -29,7 +29,7 @@ def make_ready_csv_diff(
     all_means, dt_of_steps = calculate_all_means(max_step=max_step, df=df, Dt=Dt, interval_for_step=interval_for_step)
     convert_into_ready_diffusion(dt_of_steps=dt_of_steps, all_means=all_means, out_path=out_path)
 
-def plot_energies_from_file(path='./energies.csv', who_to_plot=['Total']):
+def plot_energies_from_file(path='./energies.csv', who_to_plot=['Total'], show=True):
     df = pd.read_csv(path)
     time = df.time
     for column in df.loc[:, who_to_plot]:
@@ -37,9 +37,10 @@ def plot_energies_from_file(path='./energies.csv', who_to_plot=['Total']):
     plt.legend(loc='best', fontsize=14)
     plt.xlabel('Время, $\sigma\cdot\sqrt{\dfrac{M}{\epsilon}}$', fontsize=12)
     plt.ylabel('Энергия, $E/\epsilon$', fontsize=12)
-    plt.show()
+    if show:
+        plt.show()
 
-def plot_hists_from_file(path='./histograms.csv', draw_gauss=True):
+def plot_hists_from_file(path='./histograms.csv', draw_gauss=True, show=True):
     '''
     Возвращает температуру, вычисленную по определению через кинетическую энергию
     '''
@@ -69,11 +70,13 @@ def plot_hists_from_file(path='./histograms.csv', draw_gauss=True):
             plt.bar(df[edges[i]], rho_prob, width)
         plt.ylabel('$f_{probability}$', fontsize=14)
         plt.xlabel(names[i], fontsize=14)
-    plt.show()
+    
+    if show:
+        plt.show()
 
     return round(kT_avg, 3)
 
-def plot_gauss_lines_from_file(path='./gauss_lines.csv', train_part = 0.7):
+def plot_gauss_lines_from_file(path='./gauss_lines.csv', train_part = 0.7, show=True):
     '''
     Возвращает температуру по аппроксимации Гаусса
     '''
@@ -109,7 +112,9 @@ def plot_gauss_lines_from_file(path='./gauss_lines.csv', train_part = 0.7):
         plt.title('Линеаризация по ' + names[i][-2].capitalize(), fontsize=10)
         plt.legend(loc='best')
         kT_avg += round(-1 / (2 * k), 4)
-    plt.show()
+
+    if show:
+        plt.show()
 
     return round(kT_avg / 3, 3)
 
@@ -125,7 +130,8 @@ def calculate_sigma(kT, D, rho=1 / 27):
 
     print(
         f'lambda = {round(lamb, 3)}; D = {D}; kT = {kT} \n',
-        f'exp_section = {round(exp_section, 3)}; exp_d = {round(exp_d, 3)}; theor_section = {round(theor_section, 3)}; theor_d = {round(theor_d, 3)}'
+        f'exp_section = {round(exp_section, 3)}; exp_d = {round(exp_d, 3)}; theor_section = {round(theor_section, 3)}; theor_d = {round(theor_d, 3)}',
+        f'\n--------------------'
     )
     return
 
@@ -271,3 +277,4 @@ t=300_000 * dt, dt=0.0005, sigma_for_vel=1.0, bins_num=170, averaging_part=0.8, 
 #     input_path='./graphs_rho_1_4/diffusion_4_6.csv',
 #     N=100, max_step=2380, interval_for_step=16,
 #     out_path='./graphs_rho_1_4/diffusion_ready/t_4_6_ready.csv')
+
