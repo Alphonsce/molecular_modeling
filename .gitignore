@@ -8,3 +8,5 @@ env/
 
 # too big csv for github:
 graphs/diff_N_100_dt0_00025.csv
+
+*.txt
